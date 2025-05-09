@@ -25,10 +25,15 @@ from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
     QPushButton, QLabel, QLineEdit, QTableWidget, QTableWidgetItem, 
     QComboBox, QSpinBox, QDoubleSpinBox, QTabWidget, QFileDialog,
-    QMessageBox, QInputDialog, QScrollArea, QGroupBox, QFormLayout
+    QMessageBox, QInputDialog, QScrollArea, QGroupBox, QFormLayout,
+    QTextEdit, QHeaderView, QSplitter, QFrame, QToolBar, QStatusBar,
+    QStyle, QStyleFactory, QMenu, QDialog, QGridLayout
 )
-from PyQt6.QtGui import QIcon, QFont, QAction
-from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtGui import (
+    QIcon, QFont, QAction, QColor, QPalette, QPixmap, 
+    QTextCursor, QShortcut, QKeySequence
+)
+from PyQt6.QtCore import Qt, QSize, QTimer, QSortFilterProxyModel
 
 
 class ItemRarity(Enum):
