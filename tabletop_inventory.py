@@ -507,14 +507,13 @@ class MainWindow(QMainWindow):
         toolbar.setIconSize(QSize(24, 24))
         toolbar.setMovable(False)
         
-        # Add character action
-        new_char_action = QAction(self.style().standardIcon(QStyle.SP_FileIcon), "New Character", self)
+        # Add character action        new_char_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_FileIcon), "New Character", self)
         new_char_action.setToolTip("Create a new character")
         new_char_action.triggered.connect(self.create_new_character)
         toolbar.addAction(new_char_action)
         
         # Open character action
-        open_char_action = QAction(self.style().standardIcon(QStyle.SP_DialogOpenButton), "Open", self)
+        open_char_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogOpenButton), "Open", self)
         open_char_action.setToolTip("Open a character file")
         open_char_action.triggered.connect(self.open_character)
         toolbar.addAction(open_char_action)
@@ -559,10 +558,9 @@ class MainWindow(QMainWindow):
         
         self.setWindowTitle("TabletopInventory - Character Management System")
         self.setMinimumSize(1024, 768)
-        
-        # Set application icon
+          # Set application icon
         # Note: In a real application, you would use an actual icon file
-        self.setWindowIcon(self.style().standardIcon(QStyle.SP_FileDialogDetailedView))
+        self.setWindowIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView))
         
         # Create central widget with splitter for resizable sections
         central_widget = QWidget()
