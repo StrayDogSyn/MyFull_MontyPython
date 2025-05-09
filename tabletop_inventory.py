@@ -30,8 +30,9 @@ from PyQt6.QtWidgets import (
     QTextEdit, QHeaderView, QSplitter, QFrame, QToolBar, QStyle, QStyleFactory, QMenu, QGridLayout, QSplashScreen
 )
 from PyQt6.QtGui import (
-    QFont, QAction, QColor, QPalette, QPixmap, QPainter,
+    QFont, QAction, QColor, QPalette, QPixmap,
     QShortcut, QKeySequence
+    # QPainter removed as no longer needed after removing Treasure.png background
 )
 from PyQt6.QtCore import Qt, QSize, QTimer
 
@@ -743,15 +744,16 @@ class MainWindow(QMainWindow):
             border: none;
             border-radius: 5px;
         """)
-        
-        # Create the total currency label that will be placed on top of the background
+          # Create the total currency label
         self.total_currency_label = QLabel("Total Value: 0.00 gold 🪙")
-        self.total_currency_label.setStyleSheet("""
-            font-weight: bold; 
+        self.total_currency_label.setStyleSheet("""            font-weight: bold; 
             font-size: 18pt; 
             color: #FFD700;
-            background: transparent;
-            padding-left: 15px;
+            background: rgba(30, 30, 30, 150);
+            border-radius: 8px;
+            padding: 8px 18px;
+            margin-right: 100px;
+            /* Removed text-shadow property that was causing warnings */
         """)
         self.total_currency_label.setAlignment(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft)
         
@@ -759,39 +761,6 @@ class MainWindow(QMainWindow):
         frame_layout = QHBoxLayout(total_currency_frame)
         frame_layout.setContentsMargins(0, 0, 0, 0)
         frame_layout.addWidget(self.total_currency_label, 1)
-          # Load and set the background image
-        try:
-            # Get the path to the Treasure.png image
-            treasure_img_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'img', 'Treasure.png')
-            
-            # Create a custom background widget
-            class BackgroundFrame(QFrame):
-                def __init__(self, image_path):
-                    super().__init__()
-                    self.image_path = image_path
-                    self.pixmap = QPixmap(image_path)
-                
-                def paintEvent(self, event):
-                    painter = QPainter(self)
-                    painter.setOpacity(0.3)  # Set transparency for the image
-                    if not self.pixmap.isNull():
-                        # Scale the pixmap to fill the widget
-                        scaled_pixmap = self.pixmap.scaled(
-                            self.size(),
-                            Qt.AspectRatioMode.IgnoreAspectRatio,
-                            Qt.TransformationMode.SmoothTransformation
-                        )
-                        painter.drawPixmap(0, 0, scaled_pixmap)
-            
-            # Set the background frame
-            bg_frame = BackgroundFrame(treasure_img_path)
-            frame_layout.addWidget(bg_frame)
-            
-            # Make sure the background is behind the text
-            bg_frame.lower()
-            
-        except Exception as e:
-            print(f"Could not load treasure image: {e}")
         
         # Add the frame to the layout
         total_currency_layout.addWidget(total_currency_frame, 1)
