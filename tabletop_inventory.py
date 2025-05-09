@@ -1132,12 +1132,10 @@ class MainWindow(QMainWindow):
         self.status_bar.addPermanentWidget(self.total_weight_status_label)
         
         self.status_bar.showMessage("Ready")
-    
-    def load_characters(self):
+      def load_characters(self):
         """Load all characters from save directory"""
         self.character_combo.clear()
         characters = self.character_manager.load_all_characters()
-        
         for character in characters:
             self.character_combo.addItem(character.name, character.id)
     
@@ -1150,7 +1148,9 @@ class MainWindow(QMainWindow):
         
         character_id = self.character_combo.itemData(index)
         self.current_character = self.character_manager.characters.get(character_id)
-        self.update_ui()    def update_ui(self):
+        self.update_ui()
+        
+    def update_ui(self):
         """Update UI with current character data"""
         if not self.current_character:
             # Clear UI
@@ -1527,10 +1527,8 @@ class MainWindow(QMainWindow):
                 self.current_character.currency.gold += int(result)
             elif to_type == "platinum":
                 self.current_character.currency.platinum += int(result)
-                
-            # Update UI
+                  # Update UI
             self.update_ui()
-      def convert_currency(self):
         """Convert between different currency denominations"""
         if not self.current_character:
             return
@@ -1622,7 +1620,7 @@ class MainWindow(QMainWindow):
         self.item_rarity_combo.setCurrentIndex(0)  # Common
         self.item_equipped_check.setCurrentIndex(0)  # Not equipped
         self.item_tags_edit.clear()
-      def filter_inventory(self):
+    def filter_inventory(self):
         """Filter inventory table based on search text and rarity filter"""
         if not self.current_character:
             return
