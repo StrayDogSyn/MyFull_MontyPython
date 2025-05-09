@@ -8,6 +8,7 @@ track currency, and save/load character data.
 
 Author: StrayDog Syndications LLC
 Date: May 8, 2025
+
 Version: 1.2.0
 """
 
