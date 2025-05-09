@@ -1150,8 +1150,7 @@ class MainWindow(QMainWindow):
         
         character_id = self.character_combo.itemData(index)
         self.current_character = self.character_manager.characters.get(character_id)
-        self.update_ui()
-    def update_ui(self):
+        self.update_ui()    def update_ui(self):
         """Update UI with current character data"""
         if not self.current_character:
             # Clear UI
@@ -1164,6 +1163,7 @@ class MainWindow(QMainWindow):
             self.copper_spin.setValue(0)
             self.total_currency_label.setText("Total (in copper): 0")
             self.notes_edit.clear()
+            self.notes_preview.clear()
             self.inventory_table.setRowCount(0)
             self.total_items_label.setText("Total Items: 0")
             self.total_weight_label.setText("Total Weight: 0.0 lb")
@@ -1176,7 +1176,10 @@ class MainWindow(QMainWindow):
             self.convert_to_combo.setEnabled(False)
             
             # Update status bar
+            self.status_bar.showMessage("No character loaded")
             self.last_saved_label.setText("No character loaded")
+            self.item_count_label.setText("Items: 0")
+            self.total_weight_status_label.setText("Weight: 0.0 lb")
             return
         
         # Update character details
@@ -1200,13 +1203,15 @@ class MainWindow(QMainWindow):
         self.convert_from_combo.setEnabled(True)
         self.convert_to_combo.setEnabled(True)
         
-        # Update notes - now using QTextEdit
+        # Update notes - now using QTextEdit with preview
         self.notes_edit.setPlainText(self.current_character.notes)
+        self.update_notes_preview()
         
         # Update inventory table
         self.update_inventory_table()
         
-        # Update status bar with last saved time
+        # Update status bar with last saved time and character info
+        self.status_bar.showMessage(f"Character: {self.current_character.name} ({self.current_character.game_system}, Level {self.current_character.level})")
         self.update_status()
     
     def update_inventory_table(self):
@@ -1617,8 +1622,7 @@ class MainWindow(QMainWindow):
         self.item_rarity_combo.setCurrentIndex(0)  # Common
         self.item_equipped_check.setCurrentIndex(0)  # Not equipped
         self.item_tags_edit.clear()
-    
-    def filter_inventory(self):
+      def filter_inventory(self):
         """Filter inventory table based on search text and rarity filter"""
         if not self.current_character:
             return
@@ -1663,6 +1667,235 @@ class MainWindow(QMainWindow):
             
         # Update counters
         self.total_items_label.setText(f"Showing {row} of {len(self.current_character.inventory)} items")
+        
+    def update_notes_preview(self):
+        """Update the notes preview with basic markdown rendering"""
+        # In a full implementation, this would use a proper markdown renderer
+        # For now, we'll do some simple replacements to simulate markdown
+        text = self.notes_edit.toPlainText()
+        
+        # Handle headings
+        text = text.replace("# ", "<h1>").replace(" #", "</h1>")
+        text = text.replace("## ", "<h2>").replace(" ##", "</h2>")
+        text = text.replace("### ", "<h3>").replace(" ###", "</h3>")
+        
+        # Handle formatting
+        text = text.replace("**", "<b>", 1)
+        while "**" in text:
+            text = text.replace("**", "</b>", 1)
+            if "**" in text:
+                text = text.replace("**", "<b>", 1)
+        
+        text = text.replace("*", "<i>", 1)
+        while "*" in text:
+            text = text.replace("*", "</i>", 1)
+            if "*" in text:
+                text = text.replace("*", "<i>", 1)
+        
+        text = text.replace("__", "<u>", 1)
+        while "__" in text:
+            text = text.replace("__", "</u>", 1)
+            if "__" in text:
+                text = text.replace("__", "<u>", 1)
+        
+        text = text.replace("~~", "<s>", 1)
+        while "~~" in text:
+            text = text.replace("~~", "</s>", 1)
+            if "~~" in text:
+                text = text.replace("~~", "<s>", 1)
+        
+        # Handle code
+        text = text.replace("`", "<code>", 1)
+        while "`" in text:
+            text = text.replace("`", "</code>", 1)
+            if "`" in text:
+                text = text.replace("`", "<code>", 1)
+        
+        # Handle lists (simple)
+        text = text.replace("\n- ", "\n• ")
+        
+        # Handle horizontal rules
+        text = text.replace("\n---\n", "\n<hr>\n")
+        
+        # Handle blockquotes
+        lines = text.split("\n")
+        for i, line in enumerate(lines):
+            if line.startswith("> "):
+                lines[i] = f"<blockquote>{line[2:]}</blockquote>"
+        text = "\n".join(lines)
+        
+        # Set the HTML
+        self.notes_preview.setHtml(f"<div style='color: #e0e0e0; font-family: Segoe UI, Arial; font-size: 10pt;'>{text}</div>")
+    
+    def insert_character_template(self):
+        """Insert a character bio template into the notes editor"""
+        template = """# Character Biography #
+
+## Basic Information ##
+**Name:** [Character Name]
+**Class/Role:** [Class/Role]
+**Level:** [Level]
+**Race:** [Race]
+**Alignment:** [Alignment]
+**Background:** [Background]
+
+## Appearance ##
+[Description of character's appearance, physical traits, clothing style, etc.]
+
+## Personality ##
+[Character's personality traits, ideals, bonds, and flaws]
+
+## Background ##
+[Character's history, origins, and important life events]
+
+## Goals and Motivations ##
+- [Short-term goal]
+- [Long-term goal]
+- [Personal motivation]
+
+## Connections ##
+**Allies:** [Important allies and friends]
+**Enemies:** [Known enemies or rivals]
+**Organizations:** [Organizations the character belongs to]
+
+---
+
+## Character Development Notes ##
+[Notes on character development, significant moments, and changes over time]
+"""
+        self.notes_edit.setPlainText(template)
+        
+    def insert_quest_template(self):
+        """Insert a quest log template into the notes editor"""
+        template = """# Quest Log #
+
+## Active Quests ##
+
+### [Quest Title] ###
+**Quest Giver:** [Name]
+**Location:** [Location]
+**Objective:** [Main objective]
+**Reward:** [Promised reward]
+**Progress:**
+- [ ] [Step 1]
+- [ ] [Step 2]
+- [ ] [Step 3]
+**Notes:**
+[Important details about the quest]
+
+### [Quest Title] ###
+**Quest Giver:** [Name]
+**Location:** [Location]
+**Objective:** [Main objective]
+**Reward:** [Promised reward]
+**Progress:**
+- [ ] [Step 1]
+- [ ] [Step 2]
+**Notes:**
+[Important details about the quest]
+
+---
+
+## Completed Quests ##
+
+### [Quest Title] ###
+**Quest Giver:** [Name]
+**Location:** [Location]
+**Reward Received:** [What was actually received]
+**Outcome:** [Result of the quest]
+**Notes:**
+[Any important consequences or follow-up opportunities]
+"""
+        self.notes_edit.setPlainText(template)
+        
+    def insert_inventory_template(self):
+        """Insert an important items template into the notes editor"""
+        template = """# Important Items #
+
+## Magical Items ##
+
+### [Item Name] ###
+**Rarity:** [Rarity]
+**Attunement:** [Yes/No]
+**Properties:**
+- [Property 1]
+- [Property 2]
+**History:** [Where the item came from]
+**Notes:** [Special notes about usage or importance]
+
+### [Item Name] ###
+**Rarity:** [Rarity]
+**Attunement:** [Yes/No]
+**Properties:**
+- [Property 1]
+**Notes:** [Special notes about usage or importance]
+
+---
+
+## Quest Items ##
+
+### [Item Name] ###
+**Related Quest:** [Quest name]
+**Purpose:** [What it's needed for]
+**Current Location:** [Where it's stored]
+**Notes:** [Additional information]
+
+---
+
+## Valuable Treasures ##
+
+### [Item Name] ###
+**Estimated Value:** [Value]
+**Description:** [Description]
+**Potential Buyers:** [Who might want to buy it]
+"""
+        self.notes_edit.setPlainText(template)
+        
+    def insert_npc_template(self):
+        """Insert an NPC notes template into the notes editor"""
+        template = """# NPC Notes #
+
+## [NPC Name] ##
+**Location:** [Where they can be found]
+**Race/Type:** [Race or creature type]
+**Occupation:** [Role or job]
+**Relationship:** [Ally, Enemy, Neutral, etc.]
+
+**Appearance:**
+[Brief description of what they look like]
+
+**Personality:**
+[Notes on how they behave and interact]
+
+**Motivations:**
+- [Primary motivation]
+- [Secondary goal]
+
+**Known Information:**
+- [Information shared]
+- [Quests given]
+- [Other relevant details]
+
+**Secrets:** [Things not yet revealed]
+
+---
+
+## [NPC Name] ##
+**Location:** [Where they can be found]
+**Race/Type:** [Race or creature type]
+**Occupation:** [Role or job]
+**Relationship:** [Ally, Enemy, Neutral, etc.]
+
+**Appearance:**
+[Brief description of what they look like]
+
+**Personality:**
+[Notes on how they behave and interact]
+
+**Notes:**
+[Any other important information]
+"""
+        self.notes_edit.setPlainText(template)
     
     def show_about(self):
         """Show about dialog"""
