@@ -723,8 +723,7 @@ class MainWindow(QMainWindow):
         self.copper_spin.setRange(0, 999999)
         self.copper_spin.setStyleSheet("padding: 5px; background: rgba(180, 100, 0, 30);")
         self.copper_spin.setPrefix("🟧 ")
-        
-        # Add widgets to currency layout
+          # Add widgets to currency layout
         currency_layout.addWidget(QLabel("<b>Platinum:</b>"), 0, 0)
         currency_layout.addWidget(self.platinum_spin, 0, 1)
         currency_layout.addWidget(QLabel("<b>Gold:</b>"), 1, 0)
@@ -733,11 +732,12 @@ class MainWindow(QMainWindow):
         currency_layout.addWidget(self.silver_spin, 2, 1)
         currency_layout.addWidget(QLabel("<b>Copper:</b>"), 3, 0)
         currency_layout.addWidget(self.copper_spin, 3, 1)
-          # Add total currency value display with treasure background image
-        self.total_currency_label = QLabel("Total Coins: 0 🪙")
-        # Get the path to the Treasure.png image
+          # Add total currency value display with treasure background image        self.total_currency_label = QLabel("Total Value: 0.00 gold 🪙")
+        # Get the path to the Treasure.png image - ensure proper Windows path formatting
         treasure_img_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'img', 'Treasure.png')
-        # Set background image and increase font size for the total label
+        treasure_img_path = treasure_img_path.replace('\\', '/')  # Convert backslashes to forward slashes for CSS
+        
+        # Set background color and font size for the total label - removed unsupported properties
         self.total_currency_label.setStyleSheet(f"""
             font-weight: bold; 
             font-size: 18pt; 
@@ -745,13 +745,21 @@ class MainWindow(QMainWindow):
             color: #FFD700;
             background-color: rgba(30, 30, 30, 180); 
             border-radius: 5px;
-            background-image: url({treasure_img_path});
-            background-position: center right;
-            background-repeat: no-repeat;
-            background-origin: content;
-            background-size: contain;
-            text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.7);
         """)
+        
+        # Use an icon instead of background image for better compatibility
+        treasure_icon = QPixmap(treasure_img_path)
+        if not treasure_icon.isNull():
+            # Create a layout for the label to include the icon
+            label_layout = QHBoxLayout(self.total_currency_label)
+            label_layout.setContentsMargins(20, 0, 20, 0)
+            label_layout.addStretch()
+            
+            # Add icon in a separate label
+            icon_label = QLabel()
+            icon_label.setPixmap(treasure_icon.scaled(50, 50, Qt.AspectRatioMode.KeepAspectRatio))
+            label_layout.addWidget(icon_label)
+        
         self.total_currency_label.setMinimumHeight(60)
         self.total_currency_label.setAlignment(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft)
         self.total_currency_label.setContentsMargins(20, 0, 20, 0)
@@ -1189,15 +1197,14 @@ class MainWindow(QMainWindow):
     def update_ui(self):
         """Update UI with current character data"""
         if not self.current_character:
-            # Clear UI
-            self.name_edit.setText("")
+            # Clear UI            self.name_edit.setText("")
             self.game_system_edit.setText("")
             self.level_spin.setValue(1)
             self.platinum_spin.setValue(0)
             self.gold_spin.setValue(0)
             self.silver_spin.setValue(0)
             self.copper_spin.setValue(0)
-            self.total_currency_label.setText("Total Gold: 0 🪙")
+            self.total_currency_label.setText("Total Value: 0.00 gold 🪙")
             self.notes_edit.clear()
             self.notes_preview.clear()
             self.inventory_table.setRowCount(0)
@@ -1222,14 +1229,15 @@ class MainWindow(QMainWindow):
         self.name_edit.setText(self.current_character.name)
         self.game_system_edit.setText(self.current_character.game_system)
         self.level_spin.setValue(self.current_character.level)
-        
-        # Update currency        self.platinum_spin.setValue(self.current_character.currency.platinum)
+          # Update currency        
+        self.platinum_spin.setValue(self.current_character.currency.platinum)
         self.gold_spin.setValue(self.current_character.currency.gold)
         self.silver_spin.setValue(self.current_character.currency.silver)
         self.copper_spin.setValue(self.current_character.currency.copper)
-        # Update total currency
+        # Update total currency - convert to gold (100 copper = 1 gold)
         total_copper = self.current_character.currency.total_in_copper()
-        self.total_currency_label.setText(f"Total Coins: {total_copper:,} 🪙")
+        total_gold = total_copper / 100
+        self.total_currency_label.setText(f"Total Value: {total_gold:.2f} gold 🪙")
         
         # Enable currency converter
         self.convert_button.setEnabled(True)
@@ -1402,14 +1410,15 @@ class MainWindow(QMainWindow):
         
         self.current_character.game_system = self.game_system_edit.text()
         self.current_character.level = self.level_spin.value()
-        
-        # Update currency
+          # Update currency
         self.current_character.currency.platinum = self.platinum_spin.value()
         self.current_character.currency.gold = self.gold_spin.value()
         self.current_character.currency.silver = self.silver_spin.value()
-        self.current_character.currency.copper = self.copper_spin.value()          # Update total currency display
+        self.current_character.currency.copper = self.copper_spin.value()          
+        # Update total currency display - convert to gold
         total_copper = self.current_character.currency.total_in_copper()
-        self.total_currency_label.setText(f"Total Coins: {total_copper:,} 🪙")
+        total_gold = total_copper / 100
+        self.total_currency_label.setText(f"Total Value: {total_gold:.2f} gold 🪙")
         
         # Update notes - now using QTextEdit instead of QLineEdit
         self.current_character.notes = self.notes_edit.toPlainText()
