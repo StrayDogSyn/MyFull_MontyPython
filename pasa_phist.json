@@ -3,6 +3,7 @@
   "name": "Pasa Phist Half-elven",
   "game_system": "Pathfinder",
   "level": 9,
+  "portrait": "assets/img/PasaPhist02.png",
   "inventory": [
     {
       "id": "54c8e365-2f9d-4a1a-9b87-84e7b5e19f61",

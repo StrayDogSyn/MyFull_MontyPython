@@ -312,6 +312,7 @@ class Character:
     inventory: List[Item] = field(default_factory=list)
     currency: Currency = field(default_factory=Currency)
     notes: str = ""
+    portrait: str = ""  # Path to character portrait image
     created_at: str = field(default_factory=lambda: datetime.now().isoformat())
     updated_at: str = field(default_factory=lambda: datetime.now().isoformat())
     
@@ -407,14 +408,14 @@ class CharacterManager:
             for item in character_dict["inventory"]:
                 if isinstance(item["rarity"], str):
                     item["rarity"] = ItemRarity[item["rarity"]]
-            
-            # Create character object
+              # Create character object
             character = Character(
                 id=character_dict["id"],
                 name=character_dict["name"],
                 game_system=character_dict["game_system"],
                 level=character_dict["level"],
                 notes=character_dict["notes"],
+                portrait=character_dict.get("portrait", ""),  # Handle portrait path if present
                 created_at=character_dict["created_at"],
                 updated_at=character_dict["updated_at"]
             )
@@ -660,18 +661,27 @@ class MainWindow(QMainWindow):
         details_layout.addRow(QLabel("<b>Name:</b>"), self.name_edit)
         details_layout.addRow(QLabel("<b>Game System:</b>"), self.game_system_edit)
         details_layout.addRow(QLabel("<b>Level:</b>"), self.level_spin)
-        
-        # Add character portrait placeholder (in a real app, you would implement image loading)
+          # Add character portrait with image loading capability
         portrait_layout = QVBoxLayout()
         portrait_label = QLabel("Character Portrait")
         portrait_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        portrait_frame = QFrame()
-        portrait_frame.setFrameShape(QFrame.Shape.StyledPanel)
-        portrait_frame.setMinimumSize(150, 150)
-        portrait_frame.setMaximumSize(150, 150)
-        portrait_frame.setStyleSheet("background-color: #333333; border: 1px solid #555555;")
+        
+        # Create the portrait display
+        self.portrait_label = QLabel()
+        self.portrait_label.setFrameShape(QFrame.Shape.StyledPanel)
+        self.portrait_label.setMinimumSize(150, 150)
+        self.portrait_label.setMaximumSize(150, 150)
+        self.portrait_label.setStyleSheet("background-color: #333333; border: 1px solid #555555;")
+        self.portrait_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.portrait_label.setScaledContents(True)
+        
+        # Add a button to change portrait
+        change_portrait_btn = QPushButton("Change Portrait")
+        change_portrait_btn.clicked.connect(self.change_character_portrait)
+        
         portrait_layout.addWidget(portrait_label)
-        portrait_layout.addWidget(portrait_frame)
+        portrait_layout.addWidget(self.portrait_label)
+        portrait_layout.addWidget(change_portrait_btn)
         portrait_layout.addStretch()
         details_layout.addRow("", portrait_layout)
         
@@ -1200,10 +1210,12 @@ class MainWindow(QMainWindow):
         self.convert_amount_spin.setEnabled(True)
         self.convert_from_combo.setEnabled(True)
         self.convert_to_combo.setEnabled(True)
-        
-        # Update notes - now using QTextEdit with preview
+          # Update notes - now using QTextEdit with preview
         self.notes_edit.setPlainText(self.current_character.notes)
         self.update_notes_preview()
+        
+        # Update character portrait if available
+        self.update_character_portrait()
         
         # Update inventory table
         self.update_inventory_table()
@@ -1352,6 +1364,7 @@ class MainWindow(QMainWindow):
                 self.character_combo.removeItem(index)
                 
                 self.status_bar.showMessage(f"Deleted character: {character_name}")
+                
     def save_character(self):
         """Save the current character"""
         if not self.current_character:
@@ -1376,6 +1389,8 @@ class MainWindow(QMainWindow):
         
         # Update notes - now using QTextEdit instead of QLineEdit
         self.current_character.notes = self.notes_edit.toPlainText()
+        
+        # Portrait is updated separately in change_character_portrait method
         
         # Update timestamp
         self.current_character.updated_at = datetime.now().isoformat()
@@ -1907,6 +1922,67 @@ class MainWindow(QMainWindow):
             "This application is open-source and licensed under the MIT License.\n"
             "See the GitHub repository for more information.\n\n"
         )
+    
+    def update_character_portrait(self):
+        """Update the character portrait display with the current character's portrait"""
+        if not self.current_character or not self.current_character.portrait:
+            # Clear portrait if no character or no portrait path
+            self.portrait_label.clear()
+            self.portrait_label.setText("No Image")
+            return
+            
+        # Try to load the portrait image
+        try:
+            # Check if path is relative or absolute
+            portrait_path = self.current_character.portrait
+            if not os.path.isabs(portrait_path):
+                # If relative, try to find it relative to the application path
+                portrait_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), portrait_path)
+                
+            if os.path.exists(portrait_path):
+                pixmap = QPixmap(portrait_path)
+                if not pixmap.isNull():
+                    # Set the portrait image
+                    self.portrait_label.setPixmap(pixmap)
+                    return
+                    
+            # If we got here, loading failed
+            self.portrait_label.clear()
+            self.portrait_label.setText("Failed to load")
+            
+        except Exception as e:
+            self.portrait_label.clear()
+            self.portrait_label.setText(f"Error: {str(e)}")
+            
+    def change_character_portrait(self):
+        """Allow user to select a new character portrait"""
+        if not self.current_character:
+            return
+            
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Select Character Portrait",
+            "",
+            "Images (*.png *.jpg *.jpeg *.bmp *.gif)"
+        )
+        
+        if file_path:
+            # Try to make the path relative to the application
+            app_dir = os.path.dirname(os.path.abspath(__file__))
+            try:
+                # Try to convert to a relative path if the file is within the app directory
+                if file_path.startswith(app_dir):
+                    relative_path = os.path.relpath(file_path, app_dir)
+                    self.current_character.portrait = relative_path
+                else:
+                    # Otherwise use absolute path
+                    self.current_character.portrait = file_path
+                    
+                # Update the portrait display
+                self.update_character_portrait()
+                
+            except Exception as e:
+                QMessageBox.warning(self, "Portrait Error", f"Error setting portrait: {str(e)}")
 
 
 def main():
