@@ -18,7 +18,7 @@ import sys
 import uuid
 from dataclasses import dataclass, asdict, field
 from datetime import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional
 from enum import Enum, auto
 
 # Modern GUI with PyQt6
@@ -26,16 +26,14 @@ from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
     QPushButton, QLabel, QLineEdit, QTableWidget, QTableWidgetItem, 
     QComboBox, QSpinBox, QDoubleSpinBox, QTabWidget, QFileDialog,
-    QMessageBox, QInputDialog, QScrollArea, QGroupBox, QFormLayout,
-    QTextEdit, QHeaderView, QSplitter, QFrame, QToolBar, QStatusBar,
-    QStyle, QStyleFactory, QMenu, QDialog, QGridLayout, QProgressBar,
-    QSplashScreen, QCheckBox, QRadioButton
+    QMessageBox, QInputDialog, QGroupBox, QFormLayout,
+    QTextEdit, QHeaderView, QSplitter, QFrame, QToolBar, QStyle, QStyleFactory, QMenu, QGridLayout, QSplashScreen
 )
 from PyQt6.QtGui import (
-    QIcon, QFont, QAction, QColor, QPalette, QPixmap, 
-    QTextCursor, QShortcut, QKeySequence, QFontDatabase
+    QFont, QAction, QColor, QPalette, QPixmap, 
+    QShortcut, QKeySequence
 )
-from PyQt6.QtCore import Qt, QSize, QTimer, QSortFilterProxyModel, QRect, QPropertyAnimation, QEasingCurve
+from PyQt6.QtCore import Qt, QSize, QTimer
 
 # Global stylesheet for the application
 GLOBAL_STYLESHEET = """
@@ -890,17 +888,19 @@ class MainWindow(QMainWindow):
         summary_frame.setFrameShape(QFrame.Shape.StyledPanel)
         summary_frame.setStyleSheet("background-color: rgba(60, 60, 60, 120); border-radius: 5px; padding: 5px;")
         inventory_layout.addWidget(summary_frame)
-        
         summary_layout = QHBoxLayout(summary_frame)
         summary_layout.setContentsMargins(10, 10, 10, 10)
         
         self.total_items_label = QLabel("Total Items: 0")
         self.total_items_label.setStyleSheet("font-weight: bold;")
+        
         self.total_weight_label = QLabel("Total Weight: 0.0 lb")
         self.total_weight_label.setStyleSheet("font-weight: bold;")
+        
         self.total_value_label = QLabel("Total Value: 0.0 gp")
         self.total_value_label.setStyleSheet("font-weight: bold;")
-          summary_layout.addWidget(self.total_items_label)
+        
+        summary_layout.addWidget(self.total_items_label)
         summary_layout.addStretch(1)
         summary_layout.addWidget(self.total_weight_label)
         summary_layout.addStretch(1)
@@ -935,7 +935,8 @@ class MainWindow(QMainWindow):
         notes_toolbar.setIconSize(QSize(16, 16))
         notes_toolbar.setStyleSheet("QToolBar { spacing: 2px; background-color: #333333; border-radius: 3px; }")
         
-        # Text style section        bold_action = QAction(self.style().standardIcon(QStyle.SP_TitleBarNormalButton), "Bold", self)
+        # Text style section
+        bold_action = QAction(self.style().standardIcon(QStyle.SP_TitleBarNormalButton), "Bold", self)
         bold_action.setShortcut(QKeySequence.Bold)
         bold_action.setToolTip("Bold Text (Ctrl+B)")
         bold_action.triggered.connect(lambda: self.notes_edit.insertPlainText("**Bold Text**"))

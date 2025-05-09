@@ -1,3 +1,30 @@
 {
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    
+    // Hide files from the explorer (doesn't affect search)
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/__pycache__": true,
+        "**/.cursor/extensions/**": true
+    },
+    
+    // Control which files are searched
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/*.code-search": true,
+        "**/.cursor/extensions/**": true,
+        "**/__pycache__/**": true
+    },
+    
+    // Problem matcher exclusions
+    "problems.excludePatterns": [
+        "**/.cursor/extensions/**",
+        "**/node_modules/**",
+        "**/archive/**"
+    ]
 }
