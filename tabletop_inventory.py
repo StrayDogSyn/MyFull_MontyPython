@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-TabletopInventory - A Character Inventory Management System
+The Full Monty(Python) - A Character Inventory Management System
 
 This application provides a GUI interface for managing character inventories
 for tabletop role-playing games. Users can create characters, add/remove items,
@@ -907,55 +907,183 @@ class MainWindow(QMainWindow):
         summary_layout.addWidget(self.total_weight_label)
         summary_layout.addStretch(1)
         summary_layout.addWidget(self.total_value_label)
-        
-        # Notes tab with proper text editor
+          # Notes tab with enhanced text editor
         self.notes_tab = QWidget()
         self.tabs.addTab(self.notes_tab, self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView), "Notes")
         
         notes_layout = QVBoxLayout(self.notes_tab)
         notes_layout.setContentsMargins(10, 10, 10, 10)
         
-        # Replace LineEdit with TextEdit for multi-line notes
+        # Create a splitter for notes section
+        notes_splitter = QSplitter(Qt.Orientation.Vertical)
+        notes_layout.addWidget(notes_splitter)
+        
+        # Top section with editor
+        notes_edit_container = QWidget()
+        notes_edit_layout = QVBoxLayout(notes_edit_container)
+        notes_edit_layout.setContentsMargins(0, 0, 0, 0)
+        notes_edit_layout.setSpacing(5)
+        
+        # Enhanced text editor
         self.notes_edit = QTextEdit()
         self.notes_edit.setPlaceholderText("Enter character notes here...")
-        self.notes_edit.setStyleSheet("padding: 8px; border-radius: 3px;")
-        notes_layout.addWidget(self.notes_edit)
+        self.notes_edit.setStyleSheet("padding: 8px; border-radius: 3px; line-height: 1.3;")
+        font = QFont("Segoe UI", 10)
+        self.notes_edit.setFont(font)
         
-        # Add basic formatting toolbar for notes
+        # Add comprehensive formatting toolbar for notes
         notes_toolbar = QToolBar("Notes Toolbar")
         notes_toolbar.setIconSize(QSize(16, 16))
+        notes_toolbar.setStyleSheet("QToolBar { spacing: 2px; background-color: #333333; border-radius: 3px; }")
         
+        # Text style section
         bold_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_TitleBarNormalButton), "Bold", self)
         bold_action.setShortcut(QKeySequence.StandardKey.Bold)
+        bold_action.setToolTip("Bold Text (Ctrl+B)")
         bold_action.triggered.connect(lambda: self.notes_edit.insertPlainText("**Bold Text**"))
         
         italic_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_TitleBarShadeButton), "Italic", self)
         italic_action.setShortcut(QKeySequence.StandardKey.Italic)
+        italic_action.setToolTip("Italic Text (Ctrl+I)")
         italic_action.triggered.connect(lambda: self.notes_edit.insertPlainText("*Italic Text*"))
         
-        # Add heading formatting actions
-        heading_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogInfoView), "Heading", self)
-        heading_action.triggered.connect(lambda: self.notes_edit.insertPlainText("\n## Heading ##\n"))
+        underline_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowUnderline), "Underline", self)
+        underline_action.setToolTip("Underlined Text")
+        underline_action.triggered.connect(lambda: self.notes_edit.insertPlainText("__Underlined Text__"))
         
-        # Add list formatting actions
+        strikethrough_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_LineEditClearButton), "Strikethrough", self)
+        strikethrough_action.setToolTip("Strikethrough Text")
+        strikethrough_action.triggered.connect(lambda: self.notes_edit.insertPlainText("~~Strikethrough Text~~"))
+        
+        code_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_FileIcon), "Code", self)
+        code_action.setToolTip("Code Text")
+        code_action.triggered.connect(lambda: self.notes_edit.insertPlainText("`Code Text`"))
+        
+        # Heading section
+        heading1_action = QAction("H1", self)
+        heading1_action.setToolTip("Heading 1")
+        heading1_action.triggered.connect(lambda: self.notes_edit.insertPlainText("\n# Heading 1 #\n"))
+        
+        heading2_action = QAction("H2", self)
+        heading2_action.setToolTip("Heading 2")
+        heading2_action.triggered.connect(lambda: self.notes_edit.insertPlainText("\n## Heading 2 ##\n"))
+        
+        heading3_action = QAction("H3", self)
+        heading3_action.setToolTip("Heading 3")
+        heading3_action.triggered.connect(lambda: self.notes_edit.insertPlainText("\n### Heading 3 ###\n"))
+        
+        # List section
         bullet_list_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogListView), "Bullet List", self)
-        bullet_list_action.triggered.connect(lambda: self.notes_edit.insertPlainText("\n- List item\n- Another item\n"))
+        bullet_list_action.setToolTip("Bullet List")
+        bullet_list_action.triggered.connect(lambda: self.notes_edit.insertPlainText("\n- List item\n- Another item\n- Third item\n"))
         
-        # Add separator for sections in notes
+        numbered_list_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogListView), "Numbered List", self)
+        numbered_list_action.setToolTip("Numbered List")
+        numbered_list_action.triggered.connect(lambda: self.notes_edit.insertPlainText("\n1. First item\n2. Second item\n3. Third item\n"))
+        
+        checklist_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogApplyButton), "Checklist", self)
+        checklist_action.setToolTip("Checklist")
+        checklist_action.triggered.connect(lambda: self.notes_edit.insertPlainText("\n- [ ] Task to do\n- [x] Completed task\n- [ ] Another task\n"))
+        
+        # Dividers section
         separator_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_LineEditHBar), "Separator", self)
+        separator_action.setToolTip("Horizontal Separator")
         separator_action.triggered.connect(lambda: self.notes_edit.insertPlainText("\n---\n"))
         
+        # Blocks section
+        quote_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_MessageBoxInformation), "Quote", self)
+        quote_action.setToolTip("Quote Block")
+        quote_action.triggered.connect(lambda: self.notes_edit.insertPlainText("\n> This is a quote or important note\n> It can span multiple lines\n"))
+        
+        code_block_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView), "Code Block", self)
+        code_block_action.setToolTip("Code Block")
+        code_block_action.triggered.connect(lambda: self.notes_edit.insertPlainText("\n```\nCode block\nfor multi-line code\n```\n"))
+        
+        # Templates menu
+        templates_menu = QMenu("Templates")
+        templates_menu.setStyleSheet("QMenu { background-color: #333333; border: 1px solid #555555; }")
+        
+        character_template_action = QAction("Character Bio", self)
+        character_template_action.triggered.connect(self.insert_character_template)
+        templates_menu.addAction(character_template_action)
+        
+        quest_template_action = QAction("Quest Log", self)
+        quest_template_action.triggered.connect(self.insert_quest_template)
+        templates_menu.addAction(quest_template_action)
+        
+        inventory_template_action = QAction("Important Items", self)
+        inventory_template_action.triggered.connect(self.insert_inventory_template)
+        templates_menu.addAction(inventory_template_action)
+        
+        npc_template_action = QAction("NPC Notes", self)
+        npc_template_action.triggered.connect(self.insert_npc_template)
+        templates_menu.addAction(npc_template_action)
+        
+        templates_action = QAction("Templates", self)
+        templates_action.setMenu(templates_menu)
+        
+        # Utility actions
         clear_notes_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogResetButton), "Clear", self)
+        clear_notes_action.setToolTip("Clear Notes")
         clear_notes_action.triggered.connect(self.notes_edit.clear)
         
+        # Add actions to toolbar
         notes_toolbar.addAction(bold_action)
         notes_toolbar.addAction(italic_action)
-        notes_toolbar.addAction(heading_action)
-        notes_toolbar.addAction(bullet_list_action)
-        notes_toolbar.addAction(separator_action)
+        notes_toolbar.addAction(underline_action)
+        notes_toolbar.addAction(strikethrough_action)
+        notes_toolbar.addAction(code_action)
         notes_toolbar.addSeparator()
+        
+        notes_toolbar.addAction(heading1_action)
+        notes_toolbar.addAction(heading2_action)
+        notes_toolbar.addAction(heading3_action)
+        notes_toolbar.addSeparator()
+        
+        notes_toolbar.addAction(bullet_list_action)
+        notes_toolbar.addAction(numbered_list_action)
+        notes_toolbar.addAction(checklist_action)
+        notes_toolbar.addSeparator()
+        
+        notes_toolbar.addAction(quote_action)
+        notes_toolbar.addAction(separator_action)
+        notes_toolbar.addAction(code_block_action)
+        notes_toolbar.addSeparator()
+        
+        notes_toolbar.addAction(templates_action)
+        notes_toolbar.addSeparator()
+        
         notes_toolbar.addAction(clear_notes_action)
-        notes_layout.insertWidget(0, notes_toolbar)
+        
+        # Add toolbar and editor to layout
+        notes_edit_layout.addWidget(notes_toolbar)
+        notes_edit_layout.addWidget(self.notes_edit)
+        
+        notes_splitter.addWidget(notes_edit_container)
+        
+        # Bottom section with preview (could be implemented with a markdown renderer)
+        preview_container = QWidget()
+        preview_layout = QVBoxLayout(preview_container)
+        preview_layout.setContentsMargins(0, 0, 0, 0)
+        
+        preview_label = QLabel("Notes Preview")
+        preview_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        preview_label.setStyleSheet("font-weight: bold; background-color: #333333; padding: 5px;")
+        
+        self.notes_preview = QTextEdit()
+        self.notes_preview.setReadOnly(True)
+        self.notes_preview.setStyleSheet("background-color: #2a2a2a; padding: 10px; border-radius: 3px;")
+        
+        preview_layout.addWidget(preview_label)
+        preview_layout.addWidget(self.notes_preview)
+        
+        # Connect preview update
+        self.notes_edit.textChanged.connect(self.update_notes_preview)
+        
+        notes_splitter.addWidget(preview_container)
+        
+        # Set the initial size ratio
+        notes_splitter.setSizes([600, 400])
         
         # Set up menu bar with enhanced options
         menu_bar = self.menuBar()
@@ -986,9 +1114,23 @@ class MainWindow(QMainWindow):
         about_action = QAction("About", self)
         about_action.triggered.connect(self.show_about)
         help_menu.addAction(about_action)
-        
-        # Set up status bar
+          # Set up enhanced status bar
         self.status_bar = self.statusBar()
+        self.status_bar.setStyleSheet("QStatusBar { border-top: 1px solid #555555; }")
+        
+        # Add permanent widgets to status bar
+        self.last_saved_label = QLabel("No character loaded")
+        self.last_saved_label.setStyleSheet("padding: 2px 10px; border-right: 1px solid #555555;")
+        self.status_bar.addPermanentWidget(self.last_saved_label)
+        
+        self.item_count_label = QLabel("Items: 0")
+        self.item_count_label.setStyleSheet("padding: 2px 10px; border-right: 1px solid #555555;")
+        self.status_bar.addPermanentWidget(self.item_count_label)
+        
+        self.total_weight_status_label = QLabel("Weight: 0.0 lb")
+        self.total_weight_status_label.setStyleSheet("padding: 2px 10px;")
+        self.status_bar.addPermanentWidget(self.total_weight_status_label)
+        
         self.status_bar.showMessage("Ready")
     
     def load_characters(self):
@@ -1324,6 +1466,203 @@ class MainWindow(QMainWindow):
             self.update_inventory_table()
             
             self.status_bar.showMessage(f"Removed item: {item.name}")
+    
+    def convert_currency(self):
+        """Convert between different currency denominations"""
+        if not self.current_character:
+            return
+            
+        amount = self.convert_amount_spin.value()
+        from_type = self.convert_from_combo.currentText().lower()
+        to_type = self.convert_to_combo.currentText().lower()
+        
+        # Convert everything to copper first
+        copper_values = {
+            "copper": 1,
+            "silver": 10,
+            "gold": 100,
+            "platinum": 1000
+        }
+        
+        total_copper = amount * copper_values[from_type]
+        result = total_copper / copper_values[to_type]
+        
+        # Show result in a message box
+        QMessageBox.information(
+            self,
+            "Currency Conversion",
+            f"{amount} {from_type} = {result:.2f} {to_type}"
+        )
+        
+        # Apply conversion to character's currency if confirmed
+        reply = QMessageBox.question(
+            self,
+            "Apply Conversion?",
+            f"Would you like to subtract {amount} {from_type} and add {int(result)} {to_type} to your character's currency?",
+            QMessageBox.Yes | QMessageBox.No
+        )
+        
+        if reply == QMessageBox.Yes:
+            # Subtract the original currency
+            if from_type == "copper":
+                self.current_character.currency.copper -= amount
+            elif from_type == "silver":
+                self.current_character.currency.silver -= amount
+            elif from_type == "gold":
+                self.current_character.currency.gold -= amount
+            elif from_type == "platinum":
+                self.current_character.currency.platinum -= amount
+                
+            # Add the converted currency
+            if to_type == "copper":
+                self.current_character.currency.copper += int(result)
+            elif to_type == "silver":
+                self.current_character.currency.silver += int(result)
+            elif to_type == "gold":
+                self.current_character.currency.gold += int(result)
+            elif to_type == "platinum":
+                self.current_character.currency.platinum += int(result)
+                
+            # Update UI
+            self.update_ui()
+      def convert_currency(self):
+        """Convert between different currency denominations"""
+        if not self.current_character:
+            return
+            
+        amount = self.convert_amount_spin.value()
+        from_type = self.convert_from_combo.currentText().lower()
+        to_type = self.convert_to_combo.currentText().lower()
+        
+        # Convert everything to copper first
+        copper_values = {
+            "copper": 1,
+            "silver": 10,
+            "gold": 100,
+            "platinum": 1000
+        }
+        
+        total_copper = amount * copper_values[from_type]
+        result = total_copper / copper_values[to_type]
+        
+        # Show result in a message box
+        QMessageBox.information(
+            self,
+            "Currency Conversion",
+            f"{amount} {from_type} = {result:.2f} {to_type}"
+        )
+        
+        # Apply conversion to character's currency if confirmed
+        reply = QMessageBox.question(
+            self,
+            "Apply Conversion?",
+            f"Would you like to subtract {amount} {from_type} and add {int(result)} {to_type} to your character's currency?",
+            QMessageBox.Yes | QMessageBox.No
+        )
+        
+        if reply == QMessageBox.Yes:
+            # Subtract the original currency
+            if from_type == "copper":
+                self.current_character.currency.copper -= amount
+            elif from_type == "silver":
+                self.current_character.currency.silver -= amount
+            elif from_type == "gold":
+                self.current_character.currency.gold -= amount
+            elif from_type == "platinum":
+                self.current_character.currency.platinum -= amount
+                
+            # Add the converted currency
+            if to_type == "copper":
+                self.current_character.currency.copper += int(result)
+            elif to_type == "silver":
+                self.current_character.currency.silver += int(result)
+            elif to_type == "gold":
+                self.current_character.currency.gold += int(result)
+            elif to_type == "platinum":
+                self.current_character.currency.platinum += int(result)
+                
+            # Update UI
+            self.update_ui()
+    
+    def update_status(self):
+        """Update the status bar with current information"""
+        if not self.current_character:
+            self.last_saved_label.setText("No character loaded")
+            self.item_count_label.setText("Items: 0")
+            self.total_weight_status_label.setText("Weight: 0.0 lb")
+            return
+        
+        # Format the last saved time nicely
+        try:
+            saved_dt = datetime.fromisoformat(self.current_character.updated_at)
+            last_saved = saved_dt.strftime("%Y-%m-%d %H:%M:%S")
+            self.last_saved_label.setText(f"Last saved: {last_saved}")
+        except (ValueError, TypeError):
+            self.last_saved_label.setText("Last saved: Unknown")
+        
+        # Update item count and weight in status bar
+        total_items = sum(item.quantity for item in self.current_character.inventory)
+        self.item_count_label.setText(f"Items: {total_items}")
+        
+        total_weight = self.current_character.total_weight()
+        self.total_weight_status_label.setText(f"Weight: {total_weight:.1f} lb")
+    
+    def clear_item_form(self):
+        """Clear the add item form"""
+        self.item_name_edit.clear()
+        self.item_desc_edit.clear()
+        self.item_quantity_spin.setValue(1)
+        self.item_weight_spin.setValue(0.0)
+        self.item_value_spin.setValue(0.0)
+        self.item_rarity_combo.setCurrentIndex(0)  # Common
+        self.item_equipped_check.setCurrentIndex(0)  # Not equipped
+        self.item_tags_edit.clear()
+    
+    def filter_inventory(self):
+        """Filter inventory table based on search text and rarity filter"""
+        if not self.current_character:
+            return
+            
+        search_text = self.search_edit.text().lower()
+        rarity_filter = self.filter_rarity_combo.currentText()
+        sort_by = self.sort_by_combo.currentText()
+        
+        # Sort the inventory first
+        sorted_inventory = list(self.current_character.inventory)
+        if sort_by == "Name":
+            sorted_inventory.sort(key=lambda x: x.name)
+        elif sort_by == "Quantity":
+            sorted_inventory.sort(key=lambda x: x.quantity, reverse=True)
+        elif sort_by == "Weight":
+            sorted_inventory.sort(key=lambda x: x.weight, reverse=True)
+        elif sort_by == "Value":
+            sorted_inventory.sort(key=lambda x: x.value, reverse=True)
+        elif sort_by == "Rarity":
+            sorted_inventory.sort(key=lambda x: x.rarity.value, reverse=True)
+        
+        # Now filter and display
+        self.inventory_table.setRowCount(0)
+        row = 0
+        
+        for item in sorted_inventory:
+            # Filter by search text
+            if search_text and search_text not in item.name.lower() and search_text not in item.description.lower():
+                continue
+                
+            # Filter by rarity
+            if rarity_filter != "All Rarities" and item.rarity.name.capitalize() != rarity_filter:
+                continue
+                
+            # Add item to table
+            self.inventory_table.insertRow(row)
+            
+            # Fill in row data (reusing code from update_inventory_table)
+            # ... (this would be the same code as in update_inventory_table for a single row)
+            
+            row += 1
+            
+        # Update counters
+        self.total_items_label.setText(f"Showing {row} of {len(self.current_character.inventory)} items")
     
     def show_about(self):
         """Show about dialog"""
