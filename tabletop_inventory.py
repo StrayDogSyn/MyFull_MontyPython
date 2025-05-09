@@ -1350,10 +1350,10 @@ class MainWindow(QMainWindow):
             self, 
             "Delete Character", 
             f"Are you sure you want to delete {self.current_character.name}?",
-            QMessageBox.Yes | QMessageBox.No
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
         )
         
-        if reply == QMessageBox.Yes:
+        if reply == QMessageBox.StandardButton.Yes:
             character_id = self.current_character.id
             character_name = self.current_character.name
             
@@ -1517,66 +1517,10 @@ class MainWindow(QMainWindow):
             self,
             "Apply Conversion?",
             f"Would you like to subtract {amount} {from_type} and add {int(result)} {to_type} to your character's currency?",
-            QMessageBox.Yes | QMessageBox.No
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
         )
         
-        if reply == QMessageBox.Yes:
-            # Subtract the original currency
-            if from_type == "copper":
-                self.current_character.currency.copper -= amount
-            elif from_type == "silver":
-                self.current_character.currency.silver -= amount
-            elif from_type == "gold":
-                self.current_character.currency.gold -= amount
-            elif from_type == "platinum":
-                self.current_character.currency.platinum -= amount
-                
-            # Add the converted currency
-            if to_type == "copper":
-                self.current_character.currency.copper += int(result)
-            elif to_type == "silver":
-                self.current_character.currency.silver += int(result)
-            elif to_type == "gold":
-                self.current_character.currency.gold += int(result)
-            elif to_type == "platinum":
-                self.current_character.currency.platinum += int(result)
-                  # Update UI
-            self.update_ui()
-        """Convert between different currency denominations"""
-        if not self.current_character:
-            return
-            
-        amount = self.convert_amount_spin.value()
-        from_type = self.convert_from_combo.currentText().lower()
-        to_type = self.convert_to_combo.currentText().lower()
-        
-        # Convert everything to copper first
-        copper_values = {
-            "copper": 1,
-            "silver": 10,
-            "gold": 100,
-            "platinum": 1000
-        }
-        
-        total_copper = amount * copper_values[from_type]
-        result = total_copper / copper_values[to_type]
-        
-        # Show result in a message box
-        QMessageBox.information(
-            self,
-            "Currency Conversion",
-            f"{amount} {from_type} = {result:.2f} {to_type}"
-        )
-        
-        # Apply conversion to character's currency if confirmed
-        reply = QMessageBox.question(
-            self,
-            "Apply Conversion?",
-            f"Would you like to subtract {amount} {from_type} and add {int(result)} {to_type} to your character's currency?",
-            QMessageBox.Yes | QMessageBox.No
-        )
-        
-        if reply == QMessageBox.Yes:
+        if reply == QMessageBox.StandardButton.Yes:
             # Subtract the original currency
             if from_type == "copper":
                 self.current_character.currency.copper -= amount
