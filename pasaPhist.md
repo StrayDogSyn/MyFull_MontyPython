@@ -127,9 +127,95 @@
    - Range: 110 ft
    - Ammunition: 120
    - Damage: 1d6 + 6 plus 1d6 fire
+# Combat Gear and Defense
+ - (+1) Agile Breastplate
+   - AC Bonus: 7
+   - Type: Medium
+   - Weight: 25 lbs
+   - Spell Failure: 25%
+   - Check Penalty: 0
+   - Max Dex Bonus: 3
+ - (+2) Belt of Physical Perfection
+ - Brooch of Feather Fall
+ - Smoked Goggles
+ - 𝔖𝔠𝔢𝔫𝔡𝔞𝔫 (Gauntlet of Rust)
+ - (+2) Headband of Mental Superiority
+ - 𝔙𝔬𝔩𝔱𝔪𝔞𝔯𝔨 𝔬𝔣 𝔗𝔥𝔲𝔫𝔡𝔢𝔯-𝔎𝔢𝔢𝔭 (Masterwork Divine Sigil)
+ - (+2) Ring of Protection
+ - Ring of Recall (Nightspire) 
+ - Ring of Recall (Ferros' Forge)
+ - Efficient Quiver: 2
+ - 𝔏𝔲𝔪𝔦𝔫𝔰𝔥𝔞𝔡𝔢 (Masterwork Silver Dagger) 
+ - Campfire Bead
+ - Ioun Torch
+# Feats
+ - Improved Initiative
+ - Dodge
+ - Mounted Combat
+ - Ride-By-Attack
+ - Death From Above
+ - Raging Vitality
+ - Calvary Formation (Teamwork)
+ - Skill Focus (Craft: Armor)
+ - Hero's Fortune
+ - Endurance
+ - Weapon Focus (Battleaxe / Greataxe)
+ - Eschew Materials
+ - Skill Focus (Survival
+  ## Story Feat
+   - Arisen
 # Prepared Spells
  - Shield
  - Shock Shield
  - Abundant Ammunition
  - Divine Favor
 # Inventory
+- Potion of Cure Light Wounds: 21
+- Potion of Cure Moderate Wounds: 10
+- Potion of Cure Serious Wounds: 5
+- Potion of Cure Critical Wounds: 2
+- Alchemist's Fire: 5
+- Acid Flask: 5
+- Wand of  Lightning Bolt (charges): 16
+- Staff of Weather (charges): 3
+- Healer's Kit (charges): 10
+- Bandages of Rapid Recovery: 4
+- Flint with Steel
+- Masterwork Artisans Tools (Archery)
+- Masterwork Artisans Tools (Armor)
+- Masterwork Artisans Tools (Weapons)
+- Blanket, winter
+- Cold Weather Outfit
+- Iron Cookpot
+- Camp Shovel
+- Tent
+- Portable Alchemist's Lab
+- Alchemist's Kit
+- Bag of Holding Type 1
+- Handy Haversack
+- Saddlebags of Holding Type 3
+- Rope, hemp: 50 ft
+- Bedroll
+- Trail Rations: 5
+- Waterskin: 2
+- Whetstone
+- Soap
+- Oil
+- Case, map or scroll: 2
+- Flask: 2
+- Grappling Hook
+- Arrows: 120
+## Wealth
+- Platinum: 484
+- Gold: 103
+- Silver: 413
+- Copper: 436
+## Experience
+ - Current: 62,305
+ - Next Level: 71,000
+### Campaign Specific
+ - Hero Points: 2
+ - Conflict Points: 12
+ - Total Fame: 12
+ - Prestige: 12
+ - Honor: 31

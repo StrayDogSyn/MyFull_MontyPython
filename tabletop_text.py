@@ -6,7 +6,7 @@ This application provides a text-based interface for managing character inventor
 for tabletop role-playing games. Users can create characters, add/remove items,
 track currency, and save/load character data.
 
-Author: GitHub Copilot
+Author: StrayDog Syndications LLC
 Version: 1.0.0
 """
 
