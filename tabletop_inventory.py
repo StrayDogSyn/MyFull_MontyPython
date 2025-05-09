@@ -1226,7 +1226,7 @@ class MainWindow(QMainWindow):
         characters = self.character_manager.load_all_characters()
         for character in characters:
             self.character_combo.addItem(character.name, character.id)
-      def on_character_selected(self, index):
+    def on_character_selected(self, index):
         """Handle character selection"""
         if index < 0:
             self.current_character = None
