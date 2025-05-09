@@ -510,19 +510,19 @@ class MainWindow(QMainWindow):
         toolbar.setMovable(False)
         
         # Add character action
-        new_char_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_FileIcon), "New Character", self)
+        new_char_action = QAction(self.style().standardIcon(QStyle.SP_FileIcon), "New Character", self)
         new_char_action.setToolTip("Create a new character")
         new_char_action.triggered.connect(self.create_new_character)
         toolbar.addAction(new_char_action)
         
         # Open character action
-        open_char_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogOpenButton), "Open", self)
+        open_char_action = QAction(self.style().standardIcon(QStyle.SP_DialogOpenButton), "Open", self)
         open_char_action.setToolTip("Open a character file")
         open_char_action.triggered.connect(self.open_character)
         toolbar.addAction(open_char_action)
         
         # Save character action
-        save_char_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogSaveButton), "Save", self)
+        save_char_action = QAction(self.style().standardIcon(QStyle.SP_DialogSaveButton), "Save", self)
         save_char_action.setToolTip("Save the current character")
         save_char_action.triggered.connect(self.save_character)
         toolbar.addAction(save_char_action)
@@ -530,13 +530,13 @@ class MainWindow(QMainWindow):
         toolbar.addSeparator()
         
         # Add item action
-        add_item_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogYesButton), "Add Item", self)
+        add_item_action = QAction(self.style().standardIcon(QStyle.SP_DialogYesButton), "Add Item", self)
         add_item_action.setToolTip("Add a new item to inventory")
         add_item_action.triggered.connect(lambda: self.tabs.setCurrentIndex(1))
         toolbar.addAction(add_item_action)
         
         # Refresh action
-        refresh_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_BrowserReload), "Refresh", self)
+        refresh_action = QAction(self.style().standardIcon(QStyle.SP_BrowserReload), "Refresh", self)
         refresh_action.setToolTip("Refresh the current view")
         refresh_action.triggered.connect(self.update_ui)
         toolbar.addAction(refresh_action)
@@ -544,7 +544,7 @@ class MainWindow(QMainWindow):
         toolbar.addSeparator()
         
         # Help action
-        help_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogHelpButton), "Help", self)
+        help_action = QAction(self.style().standardIcon(QStyle.SP_DialogHelpButton), "Help", self)
         help_action.setToolTip("Show help")
         help_action.triggered.connect(self.show_about)
         toolbar.addAction(help_action)
@@ -557,15 +557,14 @@ class MainWindow(QMainWindow):
         # Set application style for a more professional look
         QApplication.setStyle(QStyleFactory.create("Fusion"))
         
-        # Apply global stylesheet
-        QApplication.setStyleSheet(GLOBAL_STYLESHEET)
+        # No need to apply global stylesheet here as it's already applied in main()
         
         self.setWindowTitle("TabletopInventory - Character Management System")
         self.setMinimumSize(1024, 768)
         
         # Set application icon
         # Note: In a real application, you would use an actual icon file
-        self.setWindowIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView))
+        self.setWindowIcon(self.style().standardIcon(QStyle.SP_FileDialogDetailedView))
         
         # Create central widget with splitter for resizable sections
         central_widget = QWidget()
@@ -588,7 +587,7 @@ class MainWindow(QMainWindow):
         
         # Character tab
         self.character_tab = QWidget()
-        self.tabs.addTab(self.character_tab, self.style().standardIcon(QStyle.StandardPixmap.SP_DialogYesButton), "Character")
+        self.tabs.addTab(self.character_tab, self.style().standardIcon(QStyle.SP_DialogYesButton), "Character")
         
         character_layout = QVBoxLayout(self.character_tab)
         character_layout.setContentsMargins(10, 10, 10, 10)
@@ -613,15 +612,15 @@ class MainWindow(QMainWindow):
         char_select_layout.addWidget(self.character_combo, stretch=1)
         
         # Character buttons with icons
-        self.new_char_btn = QPushButton(self.style().standardIcon(QStyle.StandardPixmap.SP_FileIcon), " New")
+        self.new_char_btn = QPushButton(self.style().standardIcon(QStyle.SP_FileIcon), " New")
         self.new_char_btn.setToolTip("Create a new character (Ctrl+N)")
         self.new_char_btn.clicked.connect(self.create_new_character)
         
-        self.delete_char_btn = QPushButton(self.style().standardIcon(QStyle.StandardPixmap.SP_TrashIcon), " Delete")
+        self.delete_char_btn = QPushButton(self.style().standardIcon(QStyle.SP_TrashIcon), " Delete")
         self.delete_char_btn.setToolTip("Delete the current character (Ctrl+D)")
         self.delete_char_btn.clicked.connect(self.delete_character)
         
-        self.save_char_btn = QPushButton(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogSaveButton), " Save")
+        self.save_char_btn = QPushButton(self.style().standardIcon(QStyle.SP_DialogSaveButton), " Save")
         self.save_char_btn.setToolTip("Save the current character (Ctrl+S)")
         self.save_char_btn.clicked.connect(self.save_character)
         
@@ -745,7 +744,7 @@ class MainWindow(QMainWindow):
         
         # Inventory tab with enhanced styling
         self.inventory_tab = QWidget()
-        self.tabs.addTab(self.inventory_tab, self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogListView), "Inventory")
+        self.tabs.addTab(self.inventory_tab, self.style().standardIcon(QStyle.SP_FileDialogListView), "Inventory")
         
         inventory_layout = QVBoxLayout(self.inventory_tab)
         inventory_layout.setContentsMargins(10, 10, 10, 10)
@@ -837,12 +836,12 @@ class MainWindow(QMainWindow):
         add_item_layout.addLayout(item_buttons_layout, 5, 0, 1, 4)
         
         # Add item button with icon
-        add_item_btn = QPushButton(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogYesButton), " Add Item")
+        add_item_btn = QPushButton(self.style().standardIcon(QStyle.SP_DialogYesButton), " Add Item")
         add_item_btn.setStyleSheet("padding: 5px; font-weight: bold;")
         add_item_btn.clicked.connect(self.add_item)
         
         # Clear form button
-        clear_form_btn = QPushButton(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogResetButton), " Clear Form")
+        clear_form_btn = QPushButton(self.style().standardIcon(QStyle.SP_DialogResetButton), " Clear Form")
         clear_form_btn.clicked.connect(self.clear_item_form)
         
         item_buttons_layout.addStretch(1)
@@ -901,15 +900,15 @@ class MainWindow(QMainWindow):
         self.total_weight_label.setStyleSheet("font-weight: bold;")
         self.total_value_label = QLabel("Total Value: 0.0 gp")
         self.total_value_label.setStyleSheet("font-weight: bold;")
-        
-        summary_layout.addWidget(self.total_items_label)
+          summary_layout.addWidget(self.total_items_label)
         summary_layout.addStretch(1)
         summary_layout.addWidget(self.total_weight_label)
         summary_layout.addStretch(1)
         summary_layout.addWidget(self.total_value_label)
-          # Notes tab with enhanced text editor
+        
+        # Notes tab with enhanced text editor
         self.notes_tab = QWidget()
-        self.tabs.addTab(self.notes_tab, self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView), "Notes")
+        self.tabs.addTab(self.notes_tab, self.style().standardIcon(QStyle.SP_FileDialogDetailedView), "Notes")
         
         notes_layout = QVBoxLayout(self.notes_tab)
         notes_layout.setContentsMargins(10, 10, 10, 10)
@@ -936,26 +935,25 @@ class MainWindow(QMainWindow):
         notes_toolbar.setIconSize(QSize(16, 16))
         notes_toolbar.setStyleSheet("QToolBar { spacing: 2px; background-color: #333333; border-radius: 3px; }")
         
-        # Text style section
-        bold_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_TitleBarNormalButton), "Bold", self)
-        bold_action.setShortcut(QKeySequence.StandardKey.Bold)
+        # Text style section        bold_action = QAction(self.style().standardIcon(QStyle.SP_TitleBarNormalButton), "Bold", self)
+        bold_action.setShortcut(QKeySequence.Bold)
         bold_action.setToolTip("Bold Text (Ctrl+B)")
         bold_action.triggered.connect(lambda: self.notes_edit.insertPlainText("**Bold Text**"))
         
-        italic_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_TitleBarShadeButton), "Italic", self)
-        italic_action.setShortcut(QKeySequence.StandardKey.Italic)
+        italic_action = QAction(self.style().standardIcon(QStyle.SP_TitleBarShadeButton), "Italic", self)
+        italic_action.setShortcut(QKeySequence.Italic)
         italic_action.setToolTip("Italic Text (Ctrl+I)")
         italic_action.triggered.connect(lambda: self.notes_edit.insertPlainText("*Italic Text*"))
         
-        underline_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowUnderline), "Underline", self)
+        underline_action = QAction("Underline", self)
         underline_action.setToolTip("Underlined Text")
         underline_action.triggered.connect(lambda: self.notes_edit.insertPlainText("__Underlined Text__"))
         
-        strikethrough_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_LineEditClearButton), "Strikethrough", self)
+        strikethrough_action = QAction("Strikethrough", self)
         strikethrough_action.setToolTip("Strikethrough Text")
         strikethrough_action.triggered.connect(lambda: self.notes_edit.insertPlainText("~~Strikethrough Text~~"))
         
-        code_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_FileIcon), "Code", self)
+        code_action = QAction(self.style().standardIcon(QStyle.SP_FileIcon), "Code", self)
         code_action.setToolTip("Code Text")
         code_action.triggered.connect(lambda: self.notes_edit.insertPlainText("`Code Text`"))
         
@@ -973,11 +971,11 @@ class MainWindow(QMainWindow):
         heading3_action.triggered.connect(lambda: self.notes_edit.insertPlainText("\n### Heading 3 ###\n"))
         
         # List section
-        bullet_list_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogListView), "Bullet List", self)
+        bullet_list_action = QAction(self.style().standardIcon(QStyle.SP_FileDialogListView), "Bullet List", self)
         bullet_list_action.setToolTip("Bullet List")
         bullet_list_action.triggered.connect(lambda: self.notes_edit.insertPlainText("\n- List item\n- Another item\n- Third item\n"))
         
-        numbered_list_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogListView), "Numbered List", self)
+        numbered_list_action = QAction(self.style().standardIcon(QStyle.SP_FileDialogListView), "Numbered List", self)
         numbered_list_action.setToolTip("Numbered List")
         numbered_list_action.triggered.connect(lambda: self.notes_edit.insertPlainText("\n1. First item\n2. Second item\n3. Third item\n"))
         
@@ -1128,7 +1126,8 @@ class MainWindow(QMainWindow):
         self.status_bar.addPermanentWidget(self.item_count_label)
         
         self.total_weight_status_label = QLabel("Weight: 0.0 lb")
-        self.total_weight_status_label.setStyleSheet("padding: 2px 10px;")        self.status_bar.addPermanentWidget(self.total_weight_status_label)
+        self.total_weight_status_label.setStyleSheet("padding: 2px 10px;")
+        self.status_bar.addPermanentWidget(self.total_weight_status_label)
         
         self.status_bar.showMessage("Ready")
     
@@ -1978,4 +1977,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-```
