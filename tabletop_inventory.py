@@ -722,8 +722,7 @@ class MainWindow(QMainWindow):
         self.copper_spin = QSpinBox()
         self.copper_spin.setRange(0, 999999)
         self.copper_spin.setStyleSheet("padding: 5px; background: rgba(180, 100, 0, 30);")
-        self.copper_spin.setPrefix("🟧 ")
-          # Add widgets to currency layout
+        self.copper_spin.setPrefix("🟧 ")        # Add widgets to currency layout
         currency_layout.addWidget(QLabel("<b>Platinum:</b>"), 0, 0)
         currency_layout.addWidget(self.platinum_spin, 0, 1)
         currency_layout.addWidget(QLabel("<b>Gold:</b>"), 1, 0)
@@ -732,38 +731,46 @@ class MainWindow(QMainWindow):
         currency_layout.addWidget(self.silver_spin, 2, 1)
         currency_layout.addWidget(QLabel("<b>Copper:</b>"), 3, 0)
         currency_layout.addWidget(self.copper_spin, 3, 1)
-          # Add total currency value display with treasure background image        self.total_currency_label = QLabel("Total Value: 0.00 gold 🪙")
-        # Get the path to the Treasure.png image - ensure proper Windows path formatting
-        treasure_img_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'img', 'Treasure.png')
-        treasure_img_path = treasure_img_path.replace('\\', '/')  # Convert backslashes to forward slashes for CSS
+          
+        # Create a container for the total currency display
+        total_currency_container = QWidget()
+        total_currency_layout = QHBoxLayout(total_currency_container)
+        total_currency_layout.setContentsMargins(5, 5, 5, 5)
         
-        # Set background color and font size for the total label - removed unsupported properties
-        self.total_currency_label.setStyleSheet(f"""
+        # Create the total currency label
+        self.total_currency_label = QLabel("Total Value: 0.00 gold 🪙")
+        self.total_currency_label.setStyleSheet("""
             font-weight: bold; 
             font-size: 18pt; 
-            padding: 10px;
             color: #FFD700;
-            background-color: rgba(30, 30, 30, 180); 
-            border-radius: 5px;
         """)
-        
-        # Use an icon instead of background image for better compatibility
-        treasure_icon = QPixmap(treasure_img_path)
-        if not treasure_icon.isNull():
-            # Create a layout for the label to include the icon
-            label_layout = QHBoxLayout(self.total_currency_label)
-            label_layout.setContentsMargins(20, 0, 20, 0)
-            label_layout.addStretch()
-            
-            # Add icon in a separate label
-            icon_label = QLabel()
-            icon_label.setPixmap(treasure_icon.scaled(50, 50, Qt.AspectRatioMode.KeepAspectRatio))
-            label_layout.addWidget(icon_label)
-        
         self.total_currency_label.setMinimumHeight(60)
         self.total_currency_label.setAlignment(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft)
-        self.total_currency_label.setContentsMargins(20, 0, 20, 0)
-        currency_layout.addWidget(self.total_currency_label, 4, 0, 1, 2)
+        total_currency_layout.addWidget(self.total_currency_label, 1)
+        
+        # Try to add the treasure icon
+        try:
+            treasure_img_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'img', 'Treasure.png')
+            treasure_icon = QPixmap(treasure_img_path)
+            if not treasure_icon.isNull():
+                icon_label = QLabel()
+                icon_label.setPixmap(treasure_icon.scaled(50, 50, Qt.AspectRatioMode.KeepAspectRatio))
+                total_currency_layout.addWidget(icon_label)
+        except Exception as e:
+            print(f"Could not load treasure icon: {e}")
+        
+        # Add a background frame for the total display
+        total_frame = QFrame()
+        total_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        total_frame.setStyleSheet("background-color: rgba(30, 30, 30, 180); border-radius: 5px;")
+        
+        # Add the container to the frame
+        total_frame_layout = QVBoxLayout(total_frame)
+        total_frame_layout.setContentsMargins(10, 5, 10, 5)
+        total_frame_layout.addWidget(total_currency_container)
+        
+        # Add the frame to the currency layout
+        currency_layout.addWidget(total_frame, 4, 0, 1, 2)
         
         # Add a converter between currency types
         converter_layout = QHBoxLayout()
