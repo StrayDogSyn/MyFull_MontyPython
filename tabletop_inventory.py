@@ -663,8 +663,8 @@ class MainWindow(QMainWindow):
         details_layout.addRow(QLabel("<b>Level:</b>"), self.level_spin)
           # Add character portrait with image loading capability
         portrait_layout = QVBoxLayout()
-        portrait_label = QLabel("Character Portrait")
-        portrait_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        portrait_title_label = QLabel("Character Portrait")
+        portrait_title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
         # Create the portrait display
         self.portrait_label = QLabel()
@@ -679,7 +679,7 @@ class MainWindow(QMainWindow):
         change_portrait_btn = QPushButton("Change Portrait")
         change_portrait_btn.clicked.connect(self.change_character_portrait)
         
-        portrait_layout.addWidget(portrait_label)
+        portrait_layout.addWidget(portrait_title_label)
         portrait_layout.addWidget(self.portrait_label)
         portrait_layout.addWidget(change_portrait_btn)
         portrait_layout.addStretch()
