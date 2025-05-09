@@ -933,11 +933,27 @@ class MainWindow(QMainWindow):
         italic_action.setShortcut(QKeySequence.StandardKey.Italic)
         italic_action.triggered.connect(lambda: self.notes_edit.insertPlainText("*Italic Text*"))
         
+        # Add heading formatting actions
+        heading_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogInfoView), "Heading", self)
+        heading_action.triggered.connect(lambda: self.notes_edit.insertPlainText("\n## Heading ##\n"))
+        
+        # Add list formatting actions
+        bullet_list_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogListView), "Bullet List", self)
+        bullet_list_action.triggered.connect(lambda: self.notes_edit.insertPlainText("\n- List item\n- Another item\n"))
+        
+        # Add separator for sections in notes
+        separator_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_LineEditHBar), "Separator", self)
+        separator_action.triggered.connect(lambda: self.notes_edit.insertPlainText("\n---\n"))
+        
         clear_notes_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogResetButton), "Clear", self)
         clear_notes_action.triggered.connect(self.notes_edit.clear)
         
         notes_toolbar.addAction(bold_action)
         notes_toolbar.addAction(italic_action)
+        notes_toolbar.addAction(heading_action)
+        notes_toolbar.addAction(bullet_list_action)
+        notes_toolbar.addAction(separator_action)
+        notes_toolbar.addSeparator()
         notes_toolbar.addAction(clear_notes_action)
         notes_layout.insertWidget(0, notes_toolbar)
         
