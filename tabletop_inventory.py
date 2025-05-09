@@ -660,29 +660,38 @@ class MainWindow(QMainWindow):
         details_layout.setLabelAlignment(Qt.AlignmentFlag.AlignRight)
         details_layout.addRow(QLabel("<b>Name:</b>"), self.name_edit)
         details_layout.addRow(QLabel("<b>Game System:</b>"), self.game_system_edit)
-        details_layout.addRow(QLabel("<b>Level:</b>"), self.level_spin)
-          # Add character portrait with image loading capability
+        details_layout.addRow(QLabel("<b>Level:</b>"), self.level_spin)        # Add character portrait with image loading capability
         portrait_layout = QVBoxLayout()
-        portrait_title_label = QLabel("Character Portrait")
-        portrait_title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        portrait_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        portrait_layout.setContentsMargins(0, 10, 0, 10)
         
-        # Create the portrait display
+        portrait_title_label = QLabel("Character Portrait")
+        portrait_title_label.setStyleSheet("font-weight: bold; font-size: 10pt; color: #e0e0e0;")
+        portrait_title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+          # Create the portrait display with increased size (150% larger)
         self.portrait_label = QLabel()
         self.portrait_label.setFrameShape(QFrame.Shape.StyledPanel)
-        self.portrait_label.setMinimumSize(150, 150)
-        self.portrait_label.setMaximumSize(150, 150)
-        self.portrait_label.setStyleSheet("background-color: #333333; border: 1px solid #555555;")
+        self.portrait_label.setMinimumSize(300, 300)
+        self.portrait_label.setMaximumSize(300, 300)
+        self.portrait_label.setStyleSheet("background-color: #333333; border: 1px solid #6A9DDF; border-radius: 4px;")
         self.portrait_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.portrait_label.setScaledContents(True)
-        
-        # Add a button to change portrait
+          # Add a button to change portrait
         change_portrait_btn = QPushButton("Change Portrait")
+        change_portrait_btn.setStyleSheet("padding: 5px 10px;")
         change_portrait_btn.clicked.connect(self.change_character_portrait)
         
+        # Add the portrait elements to the layout
         portrait_layout.addWidget(portrait_title_label)
+        portrait_layout.addSpacing(5)
         portrait_layout.addWidget(self.portrait_label)
-        portrait_layout.addWidget(change_portrait_btn)
+        portrait_layout.addSpacing(10)
+        
+        # Add the button directly below the portrait
+        portrait_layout.addWidget(change_portrait_btn, 0, Qt.AlignmentFlag.AlignCenter)
         portrait_layout.addStretch()
+        
+        # Add to the form layout with spacing
         details_layout.addRow("", portrait_layout)
         
         # Currency group with styled spinboxes
@@ -715,6 +724,7 @@ class MainWindow(QMainWindow):
         self.copper_spin.setStyleSheet("padding: 5px; background: rgba(180, 100, 0, 30);")
         self.copper_spin.setPrefix("🟧 ")
         
+        # Add widgets to currency layout
         currency_layout.addWidget(QLabel("<b>Platinum:</b>"), 0, 0)
         currency_layout.addWidget(self.platinum_spin, 0, 1)
         currency_layout.addWidget(QLabel("<b>Gold:</b>"), 1, 0)
@@ -723,10 +733,28 @@ class MainWindow(QMainWindow):
         currency_layout.addWidget(self.silver_spin, 2, 1)
         currency_layout.addWidget(QLabel("<b>Copper:</b>"), 3, 0)
         currency_layout.addWidget(self.copper_spin, 3, 1)
-        
-        # Add total currency value display
-        self.total_currency_label = QLabel("Total (in copper): 0")
-        self.total_currency_label.setStyleSheet("font-weight: bold; padding: 5px; background-color: rgba(60, 60, 60, 120); border-radius: 3px;")
+          # Add total currency value display with treasure background image
+        self.total_currency_label = QLabel("Total Coins: 0 🪙")
+        # Get the path to the Treasure.png image
+        treasure_img_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'img', 'Treasure.png')
+        # Set background image and increase font size for the total label
+        self.total_currency_label.setStyleSheet(f"""
+            font-weight: bold; 
+            font-size: 18pt; 
+            padding: 10px;
+            color: #FFD700;
+            background-color: rgba(30, 30, 30, 180); 
+            border-radius: 5px;
+            background-image: url({treasure_img_path});
+            background-position: center right;
+            background-repeat: no-repeat;
+            background-origin: content;
+            background-size: contain;
+            text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.7);
+        """)
+        self.total_currency_label.setMinimumHeight(60)
+        self.total_currency_label.setAlignment(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft)
+        self.total_currency_label.setContentsMargins(20, 0, 20, 0)
         currency_layout.addWidget(self.total_currency_label, 4, 0, 1, 2)
         
         # Add a converter between currency types
@@ -1169,7 +1197,7 @@ class MainWindow(QMainWindow):
             self.gold_spin.setValue(0)
             self.silver_spin.setValue(0)
             self.copper_spin.setValue(0)
-            self.total_currency_label.setText("Total (in copper): 0")
+            self.total_currency_label.setText("Total Gold: 0 🪙")
             self.notes_edit.clear()
             self.notes_preview.clear()
             self.inventory_table.setRowCount(0)
@@ -1195,15 +1223,13 @@ class MainWindow(QMainWindow):
         self.game_system_edit.setText(self.current_character.game_system)
         self.level_spin.setValue(self.current_character.level)
         
-        # Update currency
-        self.platinum_spin.setValue(self.current_character.currency.platinum)
+        # Update currency        self.platinum_spin.setValue(self.current_character.currency.platinum)
         self.gold_spin.setValue(self.current_character.currency.gold)
         self.silver_spin.setValue(self.current_character.currency.silver)
         self.copper_spin.setValue(self.current_character.currency.copper)
-        
         # Update total currency
         total_copper = self.current_character.currency.total_in_copper()
-        self.total_currency_label.setText(f"Total (in copper): {total_copper}")
+        self.total_currency_label.setText(f"Total Coins: {total_copper:,} 🪙")
         
         # Enable currency converter
         self.convert_button.setEnabled(True)
@@ -1381,11 +1407,9 @@ class MainWindow(QMainWindow):
         self.current_character.currency.platinum = self.platinum_spin.value()
         self.current_character.currency.gold = self.gold_spin.value()
         self.current_character.currency.silver = self.silver_spin.value()
-        self.current_character.currency.copper = self.copper_spin.value()
-        
-        # Update total currency display
+        self.current_character.currency.copper = self.copper_spin.value()          # Update total currency display
         total_copper = self.current_character.currency.total_in_copper()
-        self.total_currency_label.setText(f"Total (in copper): {total_copper}")
+        self.total_currency_label.setText(f"Total Coins: {total_copper:,} 🪙")
         
         # Update notes - now using QTextEdit instead of QLineEdit
         self.current_character.notes = self.notes_edit.toPlainText()
