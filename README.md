@@ -8,7 +8,7 @@
 A professional tabletop RPG character and inventory management system with an intuitive modern interface built with PyQt6. This project demonstrates advanced Python programming techniques and modern software development practices.
 
 <div align="center">
-  <img src="assets/screenshots/Screenshot%20(178).png" alt="TabletopInventory Screenshot" width="800"/>
+  <img src="assets/screenshots/Screenshot.png" alt="TabletopInventory Screenshot" width="600"/>
 </div>
 
 ## 🌟 Features
