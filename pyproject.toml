@@ -1,0 +1,11 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "MyFull_MontyPython"
+version = "1.0.0"
+description = "Tabletop RPG Inventory Management System"
+dependencies = [
+    "PyQt6",
+]
