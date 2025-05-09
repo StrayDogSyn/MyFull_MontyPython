@@ -1128,11 +1128,11 @@ class MainWindow(QMainWindow):
         self.status_bar.addPermanentWidget(self.item_count_label)
         
         self.total_weight_status_label = QLabel("Weight: 0.0 lb")
-        self.total_weight_status_label.setStyleSheet("padding: 2px 10px;")
-        self.status_bar.addPermanentWidget(self.total_weight_status_label)
+        self.total_weight_status_label.setStyleSheet("padding: 2px 10px;")        self.status_bar.addPermanentWidget(self.total_weight_status_label)
         
         self.status_bar.showMessage("Ready")
-      def load_characters(self):
+    
+    def load_characters(self):
         """Load all characters from save directory"""
         self.character_combo.clear()
         characters = self.character_manager.load_all_characters()
