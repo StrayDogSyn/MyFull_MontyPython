@@ -6,7 +6,7 @@ This application provides a GUI interface for managing character inventories
 for tabletop role-playing games. Users can create characters, add/remove items,
 track currency, and save/load character data.
 
-Author: GitHub Copilot
+Author: StrayDog Syndications LLC
 Date: May 8, 2025
 Version: 1.0.0
 """
