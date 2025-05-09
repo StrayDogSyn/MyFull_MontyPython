@@ -7,9 +7,7 @@
 
 A professional tabletop RPG character and inventory management system with an intuitive modern interface built with PyQt6. This project demonstrates advanced Python programming techniques and modern software development practices.
 
-<div align="center">
-  <img src="assets/screenshots/Screenshot.png" alt="TabletopInventory Screenshot" width="800"/>
-</div>
+![TabletopInventory Screenshot](assets/screenshots/Screenshot.png)
 
 ## 🌟 Features
 
@@ -60,18 +58,21 @@ A professional tabletop RPG character and inventory management system with an in
 ## 🚀 Installation
 
 ### Prerequisites
+
 - Python 3.9 or higher
 - PyQt6
 
 ### Setup
 
 1. Clone the repository:
+
 ```powershell
 git clone https://github.com/StrayDogSyn/MyFull_MontyPython.git
 cd MyFull_MontyPython
 ```
 
-2. Install dependencies:
+1. Install dependencies:
+
 ```powershell
 pip install -r requirements.txt  # If you have a requirements file
 # or
@@ -81,6 +82,7 @@ pip install PyQt6
 ## 📋 Usage
 
 ### GUI Version
+
 Run the application with:
 
 ```powershell
@@ -88,6 +90,7 @@ python tabletop_inventory.py
 ```
 
 ### Text-Based Version
+
 For terminal-based usage (lightweight alternative):
 
 ```powershell
@@ -95,7 +98,9 @@ python tabletop_text.py
 ```
 
 ### Sample Data
+
 The project includes a sample character file to demonstrate functionality:
+
 - `pasa_phist.json` - A pre-configured character for demonstration
 
 ## 🧪 Testing
@@ -124,7 +129,7 @@ python tabletop_inv_test.py
 
 ## 🔄 Project Structure
 
-```
+```markdown
 MyFull_MontyPython/
 ├── tabletop_inventory.py  # Main GUI application
 ├── tabletop_text.py       # Terminal-based alternative
