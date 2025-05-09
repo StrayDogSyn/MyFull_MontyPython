@@ -8,7 +8,7 @@ track currency, and save/load character data.
 
 Author: StrayDog Syndications LLC
 Date: May 8, 2025
-Version: 1.0.0
+Version: 1.2.0
 """
 
 import json
@@ -255,155 +255,470 @@ class MainWindow(QMainWindow):
         self.init_ui()
         self.load_characters()
     
+    def create_dark_palette(self):
+        """Create a dark color palette for the application"""
+        dark_palette = QPalette()
+        
+        # Set colors for the dark theme
+        dark_color = QColor(45, 45, 45)
+        dark_palette.setColor(QPalette.ColorRole.Window, dark_color)
+        dark_palette.setColor(QPalette.ColorRole.WindowText, Qt.GlobalColor.white)
+        dark_palette.setColor(QPalette.ColorRole.Base, QColor(30, 30, 30))
+        dark_palette.setColor(QPalette.ColorRole.AlternateBase, QColor(55, 55, 55))
+        dark_palette.setColor(QPalette.ColorRole.ToolTipBase, Qt.GlobalColor.white)
+        dark_palette.setColor(QPalette.ColorRole.ToolTipText, Qt.GlobalColor.white)
+        dark_palette.setColor(QPalette.ColorRole.Text, Qt.GlobalColor.white)
+        dark_palette.setColor(QPalette.ColorRole.Button, dark_color)
+        dark_palette.setColor(QPalette.ColorRole.ButtonText, Qt.GlobalColor.white)
+        dark_palette.setColor(QPalette.ColorRole.BrightText, Qt.GlobalColor.red)
+        dark_palette.setColor(QPalette.ColorRole.Link, QColor(42, 130, 218))
+        dark_palette.setColor(QPalette.ColorRole.Highlight, QColor(42, 130, 218))
+        dark_palette.setColor(QPalette.ColorRole.HighlightedText, Qt.GlobalColor.black)
+        
+        return dark_palette
+    
+    def create_toolbar(self):
+        """Create the main toolbar with common actions"""
+        toolbar = QToolBar("Main Toolbar")
+        toolbar.setIconSize(QSize(24, 24))
+        toolbar.setMovable(False)
+        
+        # Add character action
+        new_char_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_FileIcon), "New Character", self)
+        new_char_action.setToolTip("Create a new character")
+        new_char_action.triggered.connect(self.create_new_character)
+        toolbar.addAction(new_char_action)
+        
+        # Open character action
+        open_char_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogOpenButton), "Open", self)
+        open_char_action.setToolTip("Open a character file")
+        open_char_action.triggered.connect(self.open_character)
+        toolbar.addAction(open_char_action)
+        
+        # Save character action
+        save_char_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogSaveButton), "Save", self)
+        save_char_action.setToolTip("Save the current character")
+        save_char_action.triggered.connect(self.save_character)
+        toolbar.addAction(save_char_action)
+        
+        toolbar.addSeparator()
+        
+        # Add item action
+        add_item_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogYesButton), "Add Item", self)
+        add_item_action.setToolTip("Add a new item to inventory")
+        add_item_action.triggered.connect(lambda: self.tabs.setCurrentIndex(1))
+        toolbar.addAction(add_item_action)
+        
+        # Refresh action
+        refresh_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_BrowserReload), "Refresh", self)
+        refresh_action.setToolTip("Refresh the current view")
+        refresh_action.triggered.connect(self.update_ui)
+        toolbar.addAction(refresh_action)
+        
+        toolbar.addSeparator()
+        
+        # Help action
+        help_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogHelpButton), "Help", self)
+        help_action.setToolTip("Show help")
+        help_action.triggered.connect(self.show_about)
+        toolbar.addAction(help_action)
+        
+        # Add the toolbar to the main window
+        self.addToolBar(toolbar)
+    
     def init_ui(self):
         """Initialize the user interface"""
-        self.setWindowTitle("TabletopInventory")
-        self.setMinimumSize(800, 600)
+        # Set application style for a more professional look
+        QApplication.setStyle(QStyleFactory.create("Fusion"))
         
-        # Create central widget
+        # Create a palette for dark mode
+        dark_palette = self.create_dark_palette()
+        QApplication.setPalette(dark_palette)
+        
+        self.setWindowTitle("TabletopInventory - Character Management System")
+        self.setMinimumSize(1024, 768)
+        
+        # Set application icon
+        # Note: In a real application, you would use an actual icon file
+        self.setWindowIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView))
+        
+        # Create central widget with splitter for resizable sections
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         
         # Main layout
         main_layout = QVBoxLayout(central_widget)
+        main_layout.setContentsMargins(8, 8, 8, 8)
+        main_layout.setSpacing(10)
         
-        # Create tabs
+        # Create toolbar
+        self.create_toolbar()
+        
+        # Create tabs with custom styling
         self.tabs = QTabWidget()
+        self.tabs.setTabPosition(QTabWidget.TabPosition.North)
+        self.tabs.setDocumentMode(True)
+        self.tabs.setMovable(True)
         main_layout.addWidget(self.tabs)
         
         # Character tab
         self.character_tab = QWidget()
-        self.tabs.addTab(self.character_tab, "Characters")
+        self.tabs.addTab(self.character_tab, self.style().standardIcon(QStyle.StandardPixmap.SP_DialogYesButton), "Character")
         
         character_layout = QVBoxLayout(self.character_tab)
+        character_layout.setContentsMargins(10, 10, 10, 10)
+        character_layout.setSpacing(10)
         
-        # Character selection
-        char_select_layout = QHBoxLayout()
-        character_layout.addLayout(char_select_layout)
+        # Character selection with styled elements
+        char_select_frame = QFrame()
+        char_select_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        char_select_frame.setStyleSheet("background-color: rgba(60, 60, 60, 120); border-radius: 5px;")
+        character_layout.addWidget(char_select_frame)
         
+        char_select_layout = QHBoxLayout(char_select_frame)
+        char_select_layout.setContentsMargins(10, 10, 10, 10)
+        
+        char_label = QLabel("Character:")
+        char_label.setStyleSheet("font-weight: bold; color: #cccccc;")
         self.character_combo = QComboBox()
+        self.character_combo.setMinimumWidth(250)
+        self.character_combo.setStyleSheet("padding: 5px;")
         self.character_combo.currentIndexChanged.connect(self.on_character_selected)
-        char_select_layout.addWidget(QLabel("Character:"))
+        char_select_layout.addWidget(char_label)
         char_select_layout.addWidget(self.character_combo, stretch=1)
         
-        # Character buttons
-        self.new_char_btn = QPushButton("New Character")
+        # Character buttons with icons
+        self.new_char_btn = QPushButton(self.style().standardIcon(QStyle.StandardPixmap.SP_FileIcon), " New")
+        self.new_char_btn.setToolTip("Create a new character (Ctrl+N)")
         self.new_char_btn.clicked.connect(self.create_new_character)
-        self.delete_char_btn = QPushButton("Delete Character")
+        
+        self.delete_char_btn = QPushButton(self.style().standardIcon(QStyle.StandardPixmap.SP_TrashIcon), " Delete")
+        self.delete_char_btn.setToolTip("Delete the current character (Ctrl+D)")
         self.delete_char_btn.clicked.connect(self.delete_character)
-        self.save_char_btn = QPushButton("Save Character")
+        
+        self.save_char_btn = QPushButton(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogSaveButton), " Save")
+        self.save_char_btn.setToolTip("Save the current character (Ctrl+S)")
         self.save_char_btn.clicked.connect(self.save_character)
+        
+        # Add button shortcuts
+        QShortcut(QKeySequence("Ctrl+N"), self).activated.connect(self.create_new_character)
+        QShortcut(QKeySequence("Ctrl+D"), self).activated.connect(self.delete_character)
+        QShortcut(QKeySequence("Ctrl+S"), self).activated.connect(self.save_character)
         
         char_select_layout.addWidget(self.new_char_btn)
         char_select_layout.addWidget(self.delete_char_btn)
         char_select_layout.addWidget(self.save_char_btn)
         
+        # Create a horizontal splitter for character details and currency
+        char_details_splitter = QSplitter(Qt.Orientation.Horizontal)
+        character_layout.addWidget(char_details_splitter, 1)
+        
         # Character details
         char_details_group = QGroupBox("Character Details")
-        character_layout.addWidget(char_details_group)
+        char_details_group.setStyleSheet("QGroupBox { font-weight: bold; border: 1px solid #555555; border-radius: 5px; margin-top: 10px; padding-top: 10px; } QGroupBox::title { subcontrol-origin: margin; left: 10px; padding: 0 5px; }")
+        char_details_splitter.addWidget(char_details_group)
         
         details_layout = QFormLayout(char_details_group)
+        details_layout.setContentsMargins(15, 20, 15, 15)
+        details_layout.setSpacing(10)
         
         self.name_edit = QLineEdit()
+        self.name_edit.setPlaceholderText("Enter character name")
+        self.name_edit.setStyleSheet("padding: 5px; border-radius: 3px;")
+        
         self.game_system_edit = QLineEdit()
+        self.game_system_edit.setPlaceholderText("E.g. D&D 5e, Pathfinder, etc.")
+        self.game_system_edit.setStyleSheet("padding: 5px; border-radius: 3px;")
+        
         self.level_spin = QSpinBox()
         self.level_spin.setRange(1, 99)
+        self.level_spin.setStyleSheet("padding: 5px;")
+        self.level_spin.setSuffix(" level")
         
-        details_layout.addRow("Name:", self.name_edit)
-        details_layout.addRow("Game System:", self.game_system_edit)
-        details_layout.addRow("Level:", self.level_spin)
+        details_layout.setLabelAlignment(Qt.AlignmentFlag.AlignRight)
+        details_layout.addRow(QLabel("<b>Name:</b>"), self.name_edit)
+        details_layout.addRow(QLabel("<b>Game System:</b>"), self.game_system_edit)
+        details_layout.addRow(QLabel("<b>Level:</b>"), self.level_spin)
         
-        # Currency group
+        # Add character portrait placeholder (in a real app, you would implement image loading)
+        portrait_layout = QVBoxLayout()
+        portrait_label = QLabel("Character Portrait")
+        portrait_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        portrait_frame = QFrame()
+        portrait_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        portrait_frame.setMinimumSize(150, 150)
+        portrait_frame.setMaximumSize(150, 150)
+        portrait_frame.setStyleSheet("background-color: #333333; border: 1px solid #555555;")
+        portrait_layout.addWidget(portrait_label)
+        portrait_layout.addWidget(portrait_frame)
+        portrait_layout.addStretch()
+        details_layout.addRow("", portrait_layout)
+        
+        # Currency group with styled spinboxes
         currency_group = QGroupBox("Currency")
-        character_layout.addWidget(currency_group)
+        currency_group.setStyleSheet("QGroupBox { font-weight: bold; border: 1px solid #555555; border-radius: 5px; margin-top: 10px; padding-top: 10px; } QGroupBox::title { subcontrol-origin: margin; left: 10px; padding: 0 5px; }")
+        char_details_splitter.addWidget(currency_group)
         
-        currency_layout = QHBoxLayout(currency_group)
+        currency_layout = QGridLayout(currency_group)
+        currency_layout.setContentsMargins(15, 20, 15, 15)
+        currency_layout.setSpacing(10)
         
+        # Currency spinboxes with custom styling
         self.platinum_spin = QSpinBox()
         self.platinum_spin.setRange(0, 999999)
+        self.platinum_spin.setStyleSheet("padding: 5px; background: rgba(220, 220, 255, 30);")
+        self.platinum_spin.setPrefix("🟪 ")
+        
         self.gold_spin = QSpinBox()
         self.gold_spin.setRange(0, 999999)
+        self.gold_spin.setStyleSheet("padding: 5px; background: rgba(255, 255, 0, 30);")
+        self.gold_spin.setPrefix("🟨 ")
+        
         self.silver_spin = QSpinBox()
         self.silver_spin.setRange(0, 999999)
+        self.silver_spin.setStyleSheet("padding: 5px; background: rgba(200, 200, 200, 30);")
+        self.silver_spin.setPrefix("⬜ ")
+        
         self.copper_spin = QSpinBox()
         self.copper_spin.setRange(0, 999999)
+        self.copper_spin.setStyleSheet("padding: 5px; background: rgba(180, 100, 0, 30);")
+        self.copper_spin.setPrefix("🟧 ")
         
-        currency_layout.addWidget(QLabel("Platinum:"))
-        currency_layout.addWidget(self.platinum_spin)
-        currency_layout.addWidget(QLabel("Gold:"))
-        currency_layout.addWidget(self.gold_spin)
-        currency_layout.addWidget(QLabel("Silver:"))
-        currency_layout.addWidget(self.silver_spin)
-        currency_layout.addWidget(QLabel("Copper:"))
-        currency_layout.addWidget(self.copper_spin)
+        currency_layout.addWidget(QLabel("<b>Platinum:</b>"), 0, 0)
+        currency_layout.addWidget(self.platinum_spin, 0, 1)
+        currency_layout.addWidget(QLabel("<b>Gold:</b>"), 1, 0)
+        currency_layout.addWidget(self.gold_spin, 1, 1)
+        currency_layout.addWidget(QLabel("<b>Silver:</b>"), 2, 0)
+        currency_layout.addWidget(self.silver_spin, 2, 1)
+        currency_layout.addWidget(QLabel("<b>Copper:</b>"), 3, 0)
+        currency_layout.addWidget(self.copper_spin, 3, 1)
         
-        # Inventory tab
+        # Add total currency value display
+        self.total_currency_label = QLabel("Total (in copper): 0")
+        self.total_currency_label.setStyleSheet("font-weight: bold; padding: 5px; background-color: rgba(60, 60, 60, 120); border-radius: 3px;")
+        currency_layout.addWidget(self.total_currency_label, 4, 0, 1, 2)
+        
+        # Add a converter between currency types
+        converter_layout = QHBoxLayout()
+        self.convert_from_combo = QComboBox()
+        self.convert_from_combo.addItems(["Copper", "Silver", "Gold", "Platinum"])
+        self.convert_to_combo = QComboBox()
+        self.convert_to_combo.addItems(["Copper", "Silver", "Gold", "Platinum"])
+        self.convert_amount_spin = QSpinBox()
+        self.convert_amount_spin.setRange(1, 9999)
+        self.convert_amount_spin.setValue(1)
+        self.convert_button = QPushButton("Convert")
+        self.convert_button.clicked.connect(self.convert_currency)
+        
+        converter_layout.addWidget(self.convert_amount_spin)
+        converter_layout.addWidget(self.convert_from_combo)
+        converter_layout.addWidget(QLabel("to"))
+        converter_layout.addWidget(self.convert_to_combo)
+        converter_layout.addWidget(self.convert_button)
+        
+        currency_layout.addLayout(converter_layout, 5, 0, 1, 2)
+        
+        # Inventory tab with enhanced styling
         self.inventory_tab = QWidget()
-        self.tabs.addTab(self.inventory_tab, "Inventory")
+        self.tabs.addTab(self.inventory_tab, self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogListView), "Inventory")
         
         inventory_layout = QVBoxLayout(self.inventory_tab)
+        inventory_layout.setContentsMargins(10, 10, 10, 10)
+        inventory_layout.setSpacing(10)
         
-        # Add item section
-        add_item_group = QGroupBox("Add Item")
+        # Add item section with grid layout
+        add_item_group = QGroupBox("Add New Item")
+        add_item_group.setStyleSheet("QGroupBox { font-weight: bold; border: 1px solid #555555; border-radius: 5px; margin-top: 10px; padding-top: 10px; } QGroupBox::title { subcontrol-origin: margin; left: 10px; padding: 0 5px; }")
         inventory_layout.addWidget(add_item_group)
         
-        add_item_layout = QFormLayout(add_item_group)
+        add_item_layout = QGridLayout(add_item_group)
+        add_item_layout.setContentsMargins(15, 20, 15, 15)
+        add_item_layout.setSpacing(10)
         
         self.item_name_edit = QLineEdit()
+        self.item_name_edit.setPlaceholderText("Item name")
+        self.item_name_edit.setStyleSheet("padding: 5px; border-radius: 3px;")
+        
         self.item_desc_edit = QLineEdit()
+        self.item_desc_edit.setPlaceholderText("Short description")
+        self.item_desc_edit.setStyleSheet("padding: 5px; border-radius: 3px;")
+        
         self.item_quantity_spin = QSpinBox()
         self.item_quantity_spin.setRange(1, 9999)
+        self.item_quantity_spin.setStyleSheet("padding: 5px;")
+        
         self.item_weight_spin = QDoubleSpinBox()
         self.item_weight_spin.setRange(0, 9999.99)
         self.item_weight_spin.setSingleStep(0.1)
+        self.item_weight_spin.setSuffix(" lb")
+        self.item_weight_spin.setStyleSheet("padding: 5px;")
+        
         self.item_value_spin = QDoubleSpinBox()
         self.item_value_spin.setRange(0, 9999.99)
         self.item_value_spin.setSingleStep(0.1)
+        self.item_value_spin.setSuffix(" gp")
+        self.item_value_spin.setStyleSheet("padding: 5px;")
+        
         self.item_rarity_combo = QComboBox()
+        self.item_rarity_combo.setStyleSheet("padding: 5px;")
+        
+        # Add color indicators for item rarity
+        rarity_colors = {
+            "COMMON": "#aaaaaa",
+            "UNCOMMON": "#1eff00", 
+            "RARE": "#0070dd", 
+            "VERY_RARE": "#a335ee", 
+            "LEGENDARY": "#ff8000",
+            "ARTIFACT": "#e6cc80"
+        }
         
         for rarity in ItemRarity:
             self.item_rarity_combo.addItem(rarity.name.capitalize())
+            self.item_rarity_combo.setItemData(
+                self.item_rarity_combo.count() - 1, 
+                QColor(rarity_colors.get(rarity.name, "#aaaaaa")), 
+                Qt.ItemDataRole.ForegroundRole
+            )
         
-        add_item_layout.addRow("Name:", self.item_name_edit)
-        add_item_layout.addRow("Description:", self.item_desc_edit)
-        add_item_layout.addRow("Quantity:", self.item_quantity_spin)
-        add_item_layout.addRow("Weight:", self.item_weight_spin)
-        add_item_layout.addRow("Value:", self.item_value_spin)
-        add_item_layout.addRow("Rarity:", self.item_rarity_combo)
+        # Equipped checkbox
+        self.item_equipped_check = QComboBox()
+        self.item_equipped_check.addItems(["Not Equipped", "Equipped"])
+        self.item_equipped_check.setStyleSheet("padding: 5px;")
         
-        add_item_btn = QPushButton("Add Item")
+        # Tags field
+        self.item_tags_edit = QLineEdit()
+        self.item_tags_edit.setPlaceholderText("Tags (comma separated)")
+        self.item_tags_edit.setStyleSheet("padding: 5px; border-radius: 3px;")
+        
+        add_item_layout.addWidget(QLabel("<b>Name:</b>"), 0, 0)
+        add_item_layout.addWidget(self.item_name_edit, 0, 1, 1, 3)
+        add_item_layout.addWidget(QLabel("<b>Description:</b>"), 1, 0)
+        add_item_layout.addWidget(self.item_desc_edit, 1, 1, 1, 3)
+        add_item_layout.addWidget(QLabel("<b>Quantity:</b>"), 2, 0)
+        add_item_layout.addWidget(self.item_quantity_spin, 2, 1)
+        add_item_layout.addWidget(QLabel("<b>Weight:</b>"), 2, 2)
+        add_item_layout.addWidget(self.item_weight_spin, 2, 3)
+        add_item_layout.addWidget(QLabel("<b>Value:</b>"), 3, 0)
+        add_item_layout.addWidget(self.item_value_spin, 3, 1)
+        add_item_layout.addWidget(QLabel("<b>Rarity:</b>"), 3, 2)
+        add_item_layout.addWidget(self.item_rarity_combo, 3, 3)
+        add_item_layout.addWidget(QLabel("<b>Status:</b>"), 4, 0)
+        add_item_layout.addWidget(self.item_equipped_check, 4, 1)
+        add_item_layout.addWidget(QLabel("<b>Tags:</b>"), 4, 2)
+        add_item_layout.addWidget(self.item_tags_edit, 4, 3)
+        
+        # Item buttons layout
+        item_buttons_layout = QHBoxLayout()
+        add_item_layout.addLayout(item_buttons_layout, 5, 0, 1, 4)
+        
+        # Add item button with icon
+        add_item_btn = QPushButton(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogYesButton), " Add Item")
+        add_item_btn.setStyleSheet("padding: 5px; font-weight: bold;")
         add_item_btn.clicked.connect(self.add_item)
-        add_item_layout.addRow("", add_item_btn)
         
-        # Inventory table
+        # Clear form button
+        clear_form_btn = QPushButton(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogResetButton), " Clear Form")
+        clear_form_btn.clicked.connect(self.clear_item_form)
+        
+        item_buttons_layout.addStretch(1)
+        item_buttons_layout.addWidget(clear_form_btn)
+        item_buttons_layout.addWidget(add_item_btn)
+        
+        # Search and filter bar for inventory
+        filter_layout = QHBoxLayout()
+        inventory_layout.addLayout(filter_layout)
+        
+        self.search_edit = QLineEdit()
+        self.search_edit.setPlaceholderText("Search items...")
+        self.search_edit.setStyleSheet("padding: 5px; border-radius: 3px;")
+        self.search_edit.textChanged.connect(self.filter_inventory)
+        
+        self.filter_rarity_combo = QComboBox()
+        self.filter_rarity_combo.addItem("All Rarities")
+        for rarity in ItemRarity:
+            self.filter_rarity_combo.addItem(rarity.name.capitalize())
+        self.filter_rarity_combo.currentIndexChanged.connect(self.filter_inventory)
+        
+        self.sort_by_combo = QComboBox()
+        self.sort_by_combo.addItems(["Name", "Quantity", "Weight", "Value", "Rarity"])
+        self.sort_by_combo.currentIndexChanged.connect(self.filter_inventory)
+        
+        filter_layout.addWidget(QLabel("Search:"))
+        filter_layout.addWidget(self.search_edit, stretch=3)
+        filter_layout.addWidget(QLabel("Rarity:"))
+        filter_layout.addWidget(self.filter_rarity_combo, stretch=1)
+        filter_layout.addWidget(QLabel("Sort by:"))
+        filter_layout.addWidget(self.sort_by_combo, stretch=1)
+        
+        # Enhanced inventory table
         self.inventory_table = QTableWidget(0, 7)
         self.inventory_table.setHorizontalHeaderLabels(["Name", "Quantity", "Weight", "Value", "Rarity", "Description", "Actions"])
+        self.inventory_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+        self.inventory_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.Stretch)
+        self.inventory_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.inventory_table.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
+        self.inventory_table.setAlternatingRowColors(True)
+        self.inventory_table.setStyleSheet("QTableWidget { gridline-color: #444444; alternate-background-color: #383838; }")
         inventory_layout.addWidget(self.inventory_table, stretch=1)
         
-        # Inventory summary
-        summary_layout = QHBoxLayout()
-        inventory_layout.addLayout(summary_layout)
+        # Inventory summary with enhanced styling
+        summary_frame = QFrame()
+        summary_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        summary_frame.setStyleSheet("background-color: rgba(60, 60, 60, 120); border-radius: 5px; padding: 5px;")
+        inventory_layout.addWidget(summary_frame)
+        
+        summary_layout = QHBoxLayout(summary_frame)
+        summary_layout.setContentsMargins(10, 10, 10, 10)
         
         self.total_items_label = QLabel("Total Items: 0")
-        self.total_weight_label = QLabel("Total Weight: 0.0")
-        self.total_value_label = QLabel("Total Value: 0.0")
+        self.total_items_label.setStyleSheet("font-weight: bold;")
+        self.total_weight_label = QLabel("Total Weight: 0.0 lb")
+        self.total_weight_label.setStyleSheet("font-weight: bold;")
+        self.total_value_label = QLabel("Total Value: 0.0 gp")
+        self.total_value_label.setStyleSheet("font-weight: bold;")
         
         summary_layout.addWidget(self.total_items_label)
+        summary_layout.addStretch(1)
         summary_layout.addWidget(self.total_weight_label)
+        summary_layout.addStretch(1)
         summary_layout.addWidget(self.total_value_label)
         
-        # Notes tab
+        # Notes tab with proper text editor
         self.notes_tab = QWidget()
-        self.tabs.addTab(self.notes_tab, "Notes")
+        self.tabs.addTab(self.notes_tab, self.style().standardIcon(QStyle.StandardPixmap.SP_FileDialogDetailedView), "Notes")
         
         notes_layout = QVBoxLayout(self.notes_tab)
+        notes_layout.setContentsMargins(10, 10, 10, 10)
         
-        self.notes_edit = QLineEdit()
+        # Replace LineEdit with TextEdit for multi-line notes
+        self.notes_edit = QTextEdit()
         self.notes_edit.setPlaceholderText("Enter character notes here...")
+        self.notes_edit.setStyleSheet("padding: 8px; border-radius: 3px;")
         notes_layout.addWidget(self.notes_edit)
         
-        # Set up menu bar
+        # Add basic formatting toolbar for notes
+        notes_toolbar = QToolBar("Notes Toolbar")
+        notes_toolbar.setIconSize(QSize(16, 16))
+        
+        bold_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_TitleBarNormalButton), "Bold", self)
+        bold_action.setShortcut(QKeySequence.StandardKey.Bold)
+        bold_action.triggered.connect(lambda: self.notes_edit.insertPlainText("**Bold Text**"))
+        
+        italic_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_TitleBarShadeButton), "Italic", self)
+        italic_action.setShortcut(QKeySequence.StandardKey.Italic)
+        italic_action.triggered.connect(lambda: self.notes_edit.insertPlainText("*Italic Text*"))
+        
+        clear_notes_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogResetButton), "Clear", self)
+        clear_notes_action.triggered.connect(self.notes_edit.clear)
+        
+        notes_toolbar.addAction(bold_action)
+        notes_toolbar.addAction(italic_action)
+        notes_toolbar.addAction(clear_notes_action)
+        notes_layout.insertWidget(0, notes_toolbar)
+        
+        # Set up menu bar with enhanced options
         menu_bar = self.menuBar()
+        menu_bar.setStyleSheet("QMenuBar { background-color: #2d2d2d; } QMenuBar::item:selected { background-color: #3d3d3d; }")
         
         file_menu = menu_bar.addMenu("File")
         
@@ -453,8 +768,7 @@ class MainWindow(QMainWindow):
         character_id = self.character_combo.itemData(index)
         self.current_character = self.character_manager.characters.get(character_id)
         self.update_ui()
-    
-    def update_ui(self):
+      def update_ui(self):
         """Update UI with current character data"""
         if not self.current_character:
             # Clear UI
@@ -465,11 +779,21 @@ class MainWindow(QMainWindow):
             self.gold_spin.setValue(0)
             self.silver_spin.setValue(0)
             self.copper_spin.setValue(0)
-            self.notes_edit.setText("")
+            self.total_currency_label.setText("Total (in copper): 0")
+            self.notes_edit.clear()
             self.inventory_table.setRowCount(0)
             self.total_items_label.setText("Total Items: 0")
-            self.total_weight_label.setText("Total Weight: 0.0")
-            self.total_value_label.setText("Total Value: 0.0")
+            self.total_weight_label.setText("Total Weight: 0.0 lb")
+            self.total_value_label.setText("Total Value: 0.0 gp")
+            
+            # Disable currency converter in absence of character
+            self.convert_button.setEnabled(False)
+            self.convert_amount_spin.setEnabled(False)
+            self.convert_from_combo.setEnabled(False)
+            self.convert_to_combo.setEnabled(False)
+            
+            # Update status bar
+            self.last_saved_label.setText("No character loaded")
             return
         
         # Update character details
@@ -483,11 +807,24 @@ class MainWindow(QMainWindow):
         self.silver_spin.setValue(self.current_character.currency.silver)
         self.copper_spin.setValue(self.current_character.currency.copper)
         
-        # Update notes
-        self.notes_edit.setText(self.current_character.notes)
+        # Update total currency
+        total_copper = self.current_character.currency.total_in_copper()
+        self.total_currency_label.setText(f"Total (in copper): {total_copper}")
+        
+        # Enable currency converter
+        self.convert_button.setEnabled(True)
+        self.convert_amount_spin.setEnabled(True)
+        self.convert_from_combo.setEnabled(True)
+        self.convert_to_combo.setEnabled(True)
+        
+        # Update notes - now using QTextEdit
+        self.notes_edit.setPlainText(self.current_character.notes)
         
         # Update inventory table
         self.update_inventory_table()
+        
+        # Update status bar with last saved time
+        self.update_status()
     
     def update_inventory_table(self):
         """Update inventory table with current character's items"""
@@ -588,8 +925,7 @@ class MainWindow(QMainWindow):
                 self.character_combo.removeItem(index)
                 
                 self.status_bar.showMessage(f"Deleted character: {character_name}")
-    
-    def save_character(self):
+      def save_character(self):
         """Save the current character"""
         if not self.current_character:
             return
@@ -607,8 +943,12 @@ class MainWindow(QMainWindow):
         self.current_character.currency.silver = self.silver_spin.value()
         self.current_character.currency.copper = self.copper_spin.value()
         
-        # Update notes
-        self.current_character.notes = self.notes_edit.text()
+        # Update total currency display
+        total_copper = self.current_character.currency.total_in_copper()
+        self.total_currency_label.setText(f"Total (in copper): {total_copper}")
+        
+        # Update notes - now using QTextEdit instead of QLineEdit
+        self.current_character.notes = self.notes_edit.toPlainText()
         
         # Update timestamp
         self.current_character.updated_at = datetime.now().isoformat()
@@ -616,6 +956,7 @@ class MainWindow(QMainWindow):
         # Save to file
         if self.character_manager.save_character(self.current_character.id):
             self.status_bar.showMessage(f"Saved character: {self.current_character.name}")
+            self.update_status()  # Update the last saved timestamp in status bar
         else:
             self.status_bar.showMessage("Error saving character")
     
