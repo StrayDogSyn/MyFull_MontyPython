@@ -28,14 +28,239 @@ from PyQt6.QtWidgets import (
     QComboBox, QSpinBox, QDoubleSpinBox, QTabWidget, QFileDialog,
     QMessageBox, QInputDialog, QScrollArea, QGroupBox, QFormLayout,
     QTextEdit, QHeaderView, QSplitter, QFrame, QToolBar, QStatusBar,
-    QStyle, QStyleFactory, QMenu, QDialog, QGridLayout
+    QStyle, QStyleFactory, QMenu, QDialog, QGridLayout, QProgressBar,
+    QSplashScreen, QCheckBox, QRadioButton
 )
 from PyQt6.QtGui import (
     QIcon, QFont, QAction, QColor, QPalette, QPixmap, 
-    QTextCursor, QShortcut, QKeySequence
+    QTextCursor, QShortcut, QKeySequence, QFontDatabase
 )
-from PyQt6.QtCore import Qt, QSize, QTimer, QSortFilterProxyModel
+from PyQt6.QtCore import Qt, QSize, QTimer, QSortFilterProxyModel, QRect, QPropertyAnimation, QEasingCurve
 
+# Global stylesheet for the application
+GLOBAL_STYLESHEET = """
+QMainWindow {
+    background-color: #272727;
+}
+
+QWidget {
+    color: #E0E0E0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 9pt;
+}
+
+QTabWidget::pane {
+    border: 1px solid #555555;
+    border-radius: 4px;
+    padding: 2px;
+}
+
+QTabBar::tab {
+    background-color: #3A3A3A;
+    border: 1px solid #555555;
+    border-bottom: none;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    min-width: 8ex;
+    padding: 8px 12px;
+}
+
+QTabBar::tab:selected, QTabBar::tab:hover {
+    background-color: #4A4A4A;
+}
+
+QTabBar::tab:selected {
+    border-bottom: 2px solid #6A9DDF;
+}
+
+QPushButton {
+    background-color: #3A3A3A;
+    border: 1px solid #555555;
+    border-radius: 4px;
+    padding: 5px 15px;
+}
+
+QPushButton:hover {
+    background-color: #4A4A4A;
+    border: 1px solid #6A9DDF;
+}
+
+QPushButton:pressed {
+    background-color: #2A2A2A;
+}
+
+QLineEdit, QTextEdit, QSpinBox, QDoubleSpinBox, QComboBox {
+    background-color: #2A2A2A;
+    border: 1px solid #555555;
+    border-radius: 4px;
+    padding: 5px;
+    selection-background-color: #6A9DDF;
+}
+
+QLineEdit:focus, QTextEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus, QComboBox:focus {
+    border: 1px solid #6A9DDF;
+}
+
+QTableWidget {
+    gridline-color: #3A3A3A;
+    background-color: #222222;
+    selection-background-color: #3A6EA5;
+    border: 1px solid #3A3A3A;
+    border-radius: 4px;
+}
+
+QHeaderView::section {
+    background-color: #3A3A3A;
+    border: 1px solid #555555;
+    padding: 5px;
+    font-weight: bold;
+}
+
+QToolBar {
+    background-color: #2A2A2A;
+    border: none;
+    spacing: 3px;
+    padding: 3px;
+}
+
+QToolButton {
+    background-color: #2A2A2A;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+QToolButton:hover {
+    background-color: #3A3A3A;
+    border: 1px solid #555555;
+}
+
+QToolButton:pressed {
+    background-color: #1A1A1A;
+}
+
+QGroupBox {
+    background-color: #2A2A2A;
+    border: 1px solid #555555;
+    border-radius: 5px;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top center;
+    padding: 0 10px;
+    color: #E0E0E0;
+}
+
+QStatusBar {
+    background-color: #1A1A1A;
+    color: #E0E0E0;
+}
+
+QStatusBar QLabel {
+    padding: 0 8px;
+}
+
+QScrollBar:vertical {
+    border: none;
+    background-color: #2A2A2A;
+    width: 10px;
+    margin: 0;
+}
+
+QScrollBar::handle:vertical {
+    background-color: #5A5A5A;
+    border-radius: 4px;
+    min-height: 20px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background-color: #6A9DDF;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+
+QScrollBar:horizontal {
+    border: none;
+    background-color: #2A2A2A;
+    height: 10px;
+    margin: 0;
+}
+
+QScrollBar::handle:horizontal {
+    background-color: #5A5A5A;
+    border-radius: 4px;
+    min-width: 20px;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background-color: #6A9DDF;
+}
+
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    width: 0px;
+}
+
+QMenu {
+    background-color: #2A2A2A;
+    border: 1px solid #555555;
+    padding: 5px;
+}
+
+QMenu::item {
+    padding: 5px 30px 5px 30px;
+    border-radius: 4px;
+}
+
+QMenu::item:selected {
+    background-color: #3A6EA5;
+}
+
+QCheckBox::indicator, QRadioButton::indicator {
+    width: 18px;
+    height: 18px;
+}
+
+QCheckBox::indicator:unchecked, QRadioButton::indicator:unchecked {
+    border: 1px solid #555555;
+    background-color: #2A2A2A;
+}
+
+QCheckBox::indicator:checked, QRadioButton::indicator:checked {
+    border: 1px solid #6A9DDF;
+    background-color: #3A6EA5;
+}
+
+QSplitter::handle {
+    background-color: #555555;
+}
+
+QSplitter::handle:horizontal {
+    width: 1px;
+}
+
+QSplitter::handle:vertical {
+    height: 1px;
+}
+
+QProgressBar {
+    border: 1px solid #555555;
+    border-radius: 4px;
+    background-color: #2A2A2A;
+    text-align: center;
+    color: #E0E0E0;
+}
+
+QProgressBar::chunk {
+    background-color: #3A6EA5;
+    width: 10px;
+    margin: 0.5px;
+}
+"""
 
 class ItemRarity(Enum):
     """Enum representing item rarity levels"""
@@ -332,9 +557,8 @@ class MainWindow(QMainWindow):
         # Set application style for a more professional look
         QApplication.setStyle(QStyleFactory.create("Fusion"))
         
-        # Create a palette for dark mode
-        dark_palette = self.create_dark_palette()
-        QApplication.setPalette(dark_palette)
+        # Apply global stylesheet
+        QApplication.setStyleSheet(GLOBAL_STYLESHEET)
         
         self.setWindowTitle("TabletopInventory - Character Management System")
         self.setMinimumSize(1024, 768)
@@ -769,7 +993,7 @@ class MainWindow(QMainWindow):
         character_id = self.character_combo.itemData(index)
         self.current_character = self.character_manager.characters.get(character_id)
         self.update_ui()
-      def update_ui(self):
+    def update_ui(self):
         """Update UI with current character data"""
         if not self.current_character:
             # Clear UI
@@ -833,6 +1057,26 @@ class MainWindow(QMainWindow):
             self.inventory_table.setRowCount(0)
             return
         
+        # Rarity colors for better visual distinction
+        rarity_colors = {
+            ItemRarity.COMMON: "#aaaaaa",
+            ItemRarity.UNCOMMON: "#1eff00", 
+            ItemRarity.RARE: "#0070dd", 
+            ItemRarity.VERY_RARE: "#a335ee", 
+            ItemRarity.LEGENDARY: "#ff8000",
+            ItemRarity.ARTIFACT: "#e6cc80"
+        }
+        
+        # Background colors (more subtle)
+        rarity_bg_colors = {
+            ItemRarity.COMMON: "rgba(170, 170, 170, 20)",
+            ItemRarity.UNCOMMON: "rgba(30, 255, 0, 20)", 
+            ItemRarity.RARE: "rgba(0, 112, 221, 20)", 
+            ItemRarity.VERY_RARE: "rgba(163, 53, 238, 20)", 
+            ItemRarity.LEGENDARY: "rgba(255, 128, 0, 20)",
+            ItemRarity.ARTIFACT: "rgba(230, 204, 128, 20)"
+        }
+        
         # Disconnect signals to prevent recursion
         self.inventory_table.blockSignals(True)
         
@@ -845,30 +1089,51 @@ class MainWindow(QMainWindow):
             
             # Item name
             name_item = QTableWidgetItem(item.name)
-            self.inventory_table.setItem(i, 0, name_item)
+            name_item.setForeground(QColor(rarity_colors.get(item.rarity, "#ffffff")))
             
-            # Quantity
-            quantity_item = QTableWidgetItem(str(item.quantity))
-            self.inventory_table.setItem(i, 1, quantity_item)
+            # Apply some styling to the entire row based on rarity
+            for col in range(6):
+                cell_item = QTableWidgetItem("")
+                if col == 0:
+                    cell_item = name_item
+                elif col == 1:
+                    cell_item = QTableWidgetItem(str(item.quantity))
+                elif col == 2:
+                    cell_item = QTableWidgetItem(f"{item.weight:.1f}")
+                elif col == 3:
+                    cell_item = QTableWidgetItem(f"{item.value:.1f}")
+                elif col == 4:
+                    cell_item = QTableWidgetItem(item.rarity.name.capitalize())
+                    cell_item.setForeground(QColor(rarity_colors.get(item.rarity, "#ffffff")))
+                elif col == 5:
+                    cell_item = QTableWidgetItem(item.description)
+                
+                # Apply background color based on rarity
+                cell_item.setData(Qt.ItemDataRole.UserRole, item.id)
+                self.inventory_table.setItem(i, col, cell_item)
+                
+                # Apply background styling
+                self.inventory_table.item(i, col).setBackground(QColor(rarity_bg_colors.get(item.rarity, "#2A2A2A")))
+                
+                # Make the text for common items a bit brighter for better contrast
+                if item.rarity == ItemRarity.COMMON:
+                    self.inventory_table.item(i, col).setForeground(QColor("#cccccc"))
             
-            # Weight
-            weight_item = QTableWidgetItem(f"{item.weight:.1f}")
-            self.inventory_table.setItem(i, 2, weight_item)
-            
-            # Value
-            value_item = QTableWidgetItem(f"{item.value:.1f}")
-            self.inventory_table.setItem(i, 3, value_item)
-            
-            # Rarity
-            rarity_item = QTableWidgetItem(item.rarity.name.capitalize())
-            self.inventory_table.setItem(i, 4, rarity_item)
-            
-            # Description
-            desc_item = QTableWidgetItem(item.description)
-            self.inventory_table.setItem(i, 5, desc_item)
-            
-            # Actions
-            delete_btn = QPushButton("Delete")
+            # Actions - create a better-styled delete button
+            delete_btn = QPushButton(self.style().standardIcon(QStyle.StandardPixmap.SP_TrashIcon), "")
+            delete_btn.setToolTip("Remove this item")
+            delete_btn.setStyleSheet("""
+                QPushButton {
+                    border: 1px solid #555555;
+                    border-radius: 4px;
+                    padding: 3px;
+                    background-color: #3A3A3A;
+                }
+                QPushButton:hover {
+                    background-color: #cc4444;
+                    border-color: #ff5555;
+                }
+            """)
             delete_btn.clicked.connect(lambda _, item_id=item.id: self.remove_item(item_id))
             self.inventory_table.setCellWidget(i, 6, delete_btn)
         
@@ -881,8 +1146,8 @@ class MainWindow(QMainWindow):
         total_value = self.current_character.total_value()
         
         self.total_items_label.setText(f"Total Items: {total_items}")
-        self.total_weight_label.setText(f"Total Weight: {total_weight:.1f}")
-        self.total_value_label.setText(f"Total Value: {total_value:.1f}")
+        self.total_weight_label.setText(f"Total Weight: {total_weight:.1f} lb")
+        self.total_value_label.setText(f"Total Value: {total_value:.1f} gp")
     
     def create_new_character(self):
         """Create a new character"""
@@ -926,7 +1191,7 @@ class MainWindow(QMainWindow):
                 self.character_combo.removeItem(index)
                 
                 self.status_bar.showMessage(f"Deleted character: {character_name}")
-      def save_character(self):
+    def save_character(self):
         """Save the current character"""
         if not self.current_character:
             return
@@ -1052,7 +1317,11 @@ class MainWindow(QMainWindow):
             "TabletopInventory 1.0.0\n\n"
             "A character inventory management system for tabletop role-playing games.\n\n"
             "Created with PyQt6 and Python 3.\n"
-            "© 2025 GitHub Copilot"
+            "Developed by StrayDog Syndications LLC.\n\n"
+            "© 2025 GitHub CoPilot assisted code generation\n"
+            "All rights reserved.\n\n"
+            "This application is open-source and licensed under the MIT License.\n"
+            "See the GitHub repository for more information.\n\n"
         )
 
 
@@ -1064,9 +1333,53 @@ def main():
         try:
             app = QApplication(sys.argv)
             log.write("QApplication created\n")
+            
+            # Apply global stylesheet
+            app.setStyleSheet(GLOBAL_STYLESHEET)
+            
+            # Create and show splash screen
+            splash_pixmap = QPixmap(400, 300)
+            splash_pixmap.fill(QColor(40, 40, 40))
+            
+            # In a real app, you would use an actual image file like this:
+            # splash_pixmap = QPixmap("path/to/splash_image.png")
+            
+            splash = QSplashScreen(splash_pixmap)
+            
+            # Add text to splash screen
+            splash_font = QFont("Segoe UI", 14)
+            splash_font.setBold(True)
+            splash.setFont(splash_font)
+            
+            # Show the splash screen
+            splash.show()
+            splash.showMessage(
+                "TabletopInventory\nLoading...", 
+                Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignBottom,
+                QColor(200, 200, 200)
+            )
+            
+            app.processEvents()
+            
+            # Give the splash screen time to display and simulate loading
+            for i in range(1, 5):
+                splash.showMessage(
+                    f"TabletopInventory\nLoading modules... {i*25}%", 
+                    Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignBottom,
+                    QColor(200, 200, 200)
+                )
+                app.processEvents()
+                QTimer.singleShot(300, lambda: None)
+                app.processEvents()
+            
+            log.write("MainWindow creating...\n")
             window = MainWindow()
             log.write("MainWindow created\n")
+            
+            # Finish splash and show main window
+            splash.finish(window)
             window.show()
+            
             log.write("Window shown - if you don't see it, check your display settings\n")
             log.flush()
             return app.exec()
@@ -1079,3 +1392,4 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+```
