@@ -711,15 +711,24 @@ class MainWindow(QMainWindow):
 
 def main():
     """Application entry point"""
-    print("Starting TabletopInventory application...")
-    app = QApplication(sys.argv)
-    print("QApplication created")
-    window = MainWindow()
-    print("MainWindow created")
-    window.show()
-    print("Window shown - if you don't see it, check your display settings")
-    sys.exit(app.exec())
+    log_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tabletop_log.txt")
+    with open(log_path, "w") as log:
+        log.write("Starting TabletopInventory application...\n")
+        try:
+            app = QApplication(sys.argv)
+            log.write("QApplication created\n")
+            window = MainWindow()
+            log.write("MainWindow created\n")
+            window.show()
+            log.write("Window shown - if you don't see it, check your display settings\n")
+            log.flush()
+            return app.exec()
+        except Exception as e:
+            log.write(f"Error: {str(e)}\n")
+            import traceback
+            log.write(traceback.format_exc())
+            return 1
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

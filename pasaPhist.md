@@ -85,10 +85,51 @@
  - Knowledge (Dungeoneering) 0
  - Knowledge (Engineering) 7
  - Knowledge (Geography) 0
- - Knowledge () 0
- - Knowledge () 0
- - Knowledge () 0
- - Knowledge () 0
- - Knowledge () 0
- - Knowledge () 0
- - Knowledge () 7
+ - Knowledge (History) 0
+ - Knowledge (Local) 0
+ - Knowledge (Nature) 0
+ - Knowledge (Nobility) 0
+ - Knowledge (Planes) 0
+ - Knowledge (Religion) 7
+ - Linguistics 0
+ - Perception 17
+ - Perform () 0
+ - Perform () 0
+ - Profession (Soldier) 9
+ - Profession (Blacksmith) 9
+ - Ride 12
+ - Sense Motive 9
+ - Sleight of Hand 0
+ - Spellcraft 7
+ - Stealth 2
+ - Survival 16
+ - Swim 12
+ - Use Magic Device 0
+# Weapons and Offense
+ - 𝔔𝔲𝔥𝔢𝔡𝔦𝔯𝔞𝔫𝔡 𝔐𝔬𝔯𝔢𝔶𝔫 (Greataxe of Shock)
+   - ATK Bonus: +15 / +10
+   - Critical: x3
+   - Type: S
+   - Range: None
+   - Ammunition: None
+   - Damage: 2d6 + 6 plus 1d6 electricity
+ - 𝔉𝔲𝔶𝔯 & 𝔙𝔲𝔫𝔡𝔢𝔯𝟛𝔤𝔢𝔱𝔢 (Tomahawks of Returning)
+   - ATK Bonus: +12 / +7
+   - Critical: x2
+   - Type: S
+   - Range: 20 ft
+   - Ammunition: 2
+   - Damage: 1d6 + 6
+ - 𝔖𝔦𝔫𝔤𝔢𝔯 𝔬𝔣 𝔗𝔥𝔢 𝔖𝔪𝔬𝔨𝔢𝔰𝔱𝔯𝔞𝔦𝔡 (Composite Longbow of Flame)
+   - ATK Bonus: +11 / +6
+   - Critical: x3
+   - Type: P
+   - Range: 110 ft
+   - Ammunition: 120
+   - Damage: 1d6 + 6 plus 1d6 fire
+# Prepared Spells
+ - Shield
+ - Shock Shield
+ - Abundant Ammunition
+ - Divine Favor
+# Inventory
