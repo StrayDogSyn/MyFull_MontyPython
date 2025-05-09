@@ -507,7 +507,8 @@ class MainWindow(QMainWindow):
         toolbar.setIconSize(QSize(24, 24))
         toolbar.setMovable(False)
         
-        # Add character action        new_char_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_FileIcon), "New Character", self)
+        # Add character action
+        new_char_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_FileIcon), "New Character", self)
         new_char_action.setToolTip("Create a new character")
         new_char_action.triggered.connect(self.create_new_character)
         toolbar.addAction(new_char_action)
@@ -519,7 +520,7 @@ class MainWindow(QMainWindow):
         toolbar.addAction(open_char_action)
         
         # Save character action
-        save_char_action = QAction(self.style().standardIcon(QStyle.SP_DialogSaveButton), "Save", self)
+        save_char_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogSaveButton), "Save", self)
         save_char_action.setToolTip("Save the current character")
         save_char_action.triggered.connect(self.save_character)
         toolbar.addAction(save_char_action)
@@ -527,13 +528,13 @@ class MainWindow(QMainWindow):
         toolbar.addSeparator()
         
         # Add item action
-        add_item_action = QAction(self.style().standardIcon(QStyle.SP_DialogYesButton), "Add Item", self)
+        add_item_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogYesButton), "Add Item", self)
         add_item_action.setToolTip("Add a new item to inventory")
         add_item_action.triggered.connect(lambda: self.tabs.setCurrentIndex(1))
         toolbar.addAction(add_item_action)
         
         # Refresh action
-        refresh_action = QAction(self.style().standardIcon(QStyle.SP_BrowserReload), "Refresh", self)
+        refresh_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_BrowserReload), "Refresh", self)
         refresh_action.setToolTip("Refresh the current view")
         refresh_action.triggered.connect(self.update_ui)
         toolbar.addAction(refresh_action)
@@ -541,7 +542,7 @@ class MainWindow(QMainWindow):
         toolbar.addSeparator()
         
         # Help action
-        help_action = QAction(self.style().standardIcon(QStyle.SP_DialogHelpButton), "Help", self)
+        help_action = QAction(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogHelpButton), "Help", self)
         help_action.setToolTip("Show help")
         help_action.triggered.connect(self.show_about)
         toolbar.addAction(help_action)
