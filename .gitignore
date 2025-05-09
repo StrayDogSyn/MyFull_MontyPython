@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Project specific
+archive/
+tabletop_log.txt
+
 # C extensions
 *.so
 

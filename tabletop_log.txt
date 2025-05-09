@@ -1,4 +1,0 @@
-Starting TabletopInventory application...
-QApplication created
-MainWindow created
-Window shown - if you don't see it, check your display settings
